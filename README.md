@@ -1,4 +1,4 @@
-Social Media Platform
+## o
 Social Media Platform is a comprehensive application designed to provide users with a social networking experience. The platform allows users to create profiles, connect with friends, share posts, and interact with each other through features such as comments, likes, follows, messaging, and notifications. The goal is to create a vibrant and engaging online community where users can express themselves, stay connected, and discover new content.
 
 Technologies Used
