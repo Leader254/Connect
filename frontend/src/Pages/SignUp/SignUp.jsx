@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import '../../CSS/SignUp.css'
 import { Link } from 'react-router-dom'
+import axios from 'axios'
 
 const SignUp = () => {
 
@@ -12,6 +13,8 @@ const SignUp = () => {
         cpassword: ''
     })
 
+    const [error, setError] = useState(null)
+
     const handleChange = (e) => {
         setInputs((prev) => {
             return {
@@ -21,37 +24,48 @@ const SignUp = () => {
         })
     }
 
+    // const handleRegister = async (e) => {
+    //     e.preventDefault()
+    //     if (inputs.password === inputs.cpassword) {
+    //         const res = await fetch('http://localhost:3000/api/auth/register', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify({ username: inputs.username, email: inputs.email, fullname: inputs.fullname, password: inputs.password })
+    //         })
+    //         const data = await res.json()
+    //         console.log(data)
+    //         if (data.success) {
+    //             alert('Registered Successfully')
+    //             setInputs({
+    //                 username: '',
+    //                 email: '',
+    //                 fullname: '',
+    //                 password: '',
+    //                 cpassword: ''
+    //             })
+    //         }
+    //         else {
+    //             alert(data.message)
+    //         }
+    //     }
+    //     else {
+    //         alert('Password and Confirm Password should be same')
+    //     }
+    // }
+
     const handleRegister = async (e) => {
         e.preventDefault()
-        if (inputs.password === inputs.cpassword) {
-            const res = await fetch('http://localhost:3000/api/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ username: inputs.username, email: inputs.email, fullname: inputs.fullname, password: inputs.password })
-            })
-            const data = await res.json()
-            console.log(data)
-            if (data.success) {
-                alert('Registered Successfully')
-                setInputs({
-                    username: '',
-                    email: '',
-                    fullname: '',
-                    password: '',
-                    cpassword: ''
-                })
-            }
-            else {
-                alert(data.message)
-            }
-        }
-        else {
-            alert('Password and Confirm Password should be same')
+
+        try {
+            await axios.post("http://localhost:3000/api/auth/register", inputs)
+
+        } catch (error) {
+            setError(error.response.data.message)
+
         }
     }
-
 
 
     return (

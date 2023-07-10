@@ -1,12 +1,14 @@
-## o
-Social Media Platform is a comprehensive application designed to provide users with a social networking experience. The platform allows users to create profiles, connect with friends, share posts, and interact with each other through features such as comments, likes, follows, messaging, and notifications. The goal is to create a vibrant and engaging online community where users can express themselves, stay connected, and discover new content.
+## Social Media Application
+Social Media Platform is a comprehensive application designed to provide users with a social networking experience. The platform allows users to create profiles, connect with friends, share posts, and interact with each other through features such as comments, likes, follows, messaging, and notifications.
 
-Technologies Used
+## Technologies Used
+```
 React.js
 Express.js
 Node.js
 MSSQL
 Socket.io
+```
 Features
 User Profiles: Users can create personalized profiles with relevant information such as profile pictures, bios, and contact details.
 Posts: Users can create, publish, and share posts containing various types of content such as text and images.
