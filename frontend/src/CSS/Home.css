@@ -1,0 +1,17 @@
+.home {
+    padding: 20px 40px;
+    background-color: azure;
+}
+
+/* media queries */
+@media (max-width: 480px) {
+    .home {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 960px) {
+    .home {
+        padding: 20px;
+    }
+}

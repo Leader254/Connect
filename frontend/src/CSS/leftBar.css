@@ -1,0 +1,61 @@
+.leftbar {
+    flex: 2;
+    position: sticky;
+    top: 70px;
+    height: calc(100vh - 70px);
+    overflow: scroll;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.leftbar .container1 {
+    padding: 20px 50px;
+}
+
+.container1 .menu {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+hr {
+    margin: 20px 0;
+    border: none;
+    height: 0.5px;
+    background-color: aqua;
+}
+
+.menu .user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.menu .user img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.menu .item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.menu .item .icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* media queries */
+@media(max-width: 480px) {
+    .leftbar {
+        display: none;
+    }
+}

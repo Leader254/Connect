@@ -1,0 +1,95 @@
+.rightbar {
+    flex: 3;
+    position: sticky;
+    top: 70px;
+    height: calc(100vh - 70px);
+    overflow: scroll;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.container3 {
+    padding: 20px;
+}
+
+.container3 .item {
+    -webkit-box-shadow: 1px 1px 3px 2px rgba(0, 0, 0, 1);
+    -moz-box-shadow: 1px 1px 3px 2px rgba(0, 0, 0, 1);
+    box-shadow: 1px 1px 3px 2px rgba(0, 0, 0, 1);
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.item .user {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.user .userInfo {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+}
+
+.user .userInfo img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.online {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: green;
+    position: absolute;
+    top: 0;
+    left: 30px;
+}
+
+.userInfo span {
+    font-weight: bold;
+}
+
+.action-btns {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.follow {
+    background-color: #1877f2;
+}
+
+.dismiss {
+    background-color: #e0245e;
+}
+
+.follow,
+.dismiss {
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    padding: 5px;
+}
+
+/* media queries */
+@media (max-width: 480px) {
+    .rightbar {
+        display: none;
+    }
+}
+
+@media (max-width: 960px) {
+    .rightbar {
+        display: none;
+    }
+}
