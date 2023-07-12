@@ -5,7 +5,7 @@ import { BsFillSendFill } from 'react-icons/bs'
 
 const Comments = () => {
 
-    const { currentuser } = useContext(AuthContext)
+    const { user } = useContext(AuthContext)
 
     const comments = [
         {
@@ -26,7 +26,7 @@ const Comments = () => {
     return (
         <div className='comments'>
             <div className="new">
-                <img src={currentuser.profilePic} alt="" />
+                <img src={user.profilePic} alt="" />
                 <div className="text">
                     <input type="text" placeholder='Write a comment...' />
                     <BsFillSendFill style={{ cursor: "pointer" }} />

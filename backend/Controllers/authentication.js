@@ -45,37 +45,44 @@ export const Register = async (req, res) => {
 
 // Login logic
 export const Login = async (req, res) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
   try {
     let pool = await sql.connect(config.sql);
     let result = await pool
       .request()
-      .input("email", sql.VarChar, email)
-      .query("SELECT * FROM Users WHERE email = @email");
+      .input("username", sql.VarChar, username)
+      .query(
+        "SELECT *, profilePic, coverPic, country FROM Users WHERE username = @username"
+      );
+
     const user = result.recordset[0];
     if (!user) {
       return res.status(400).json({ error: "User does not exist" });
     } else {
       const validPassword = bcrypt.compareSync(password, user.password);
       if (!validPassword) {
-        return res.status(400).json({ error: "Invalid email or password" });
+        return res.status(400).json({ error: "Invalid username or password" });
       } else {
         const token = `JWT ${jwt.sign(
           {
             id: user.id,
-            ussername: user.username,
+            username: user.username,
             fullname: user.fullname,
             email: user.email,
           },
           config.jwt_secret
         )}`;
 
-        const { id, username, email, fullname } = user;
+        const { id, username, email, fullname, profilePic, coverPic, country } =
+          user;
         return res.status(200).json({
           id: id,
           username: username,
           email: email,
           fullname: fullname,
+          profilePic: profilePic,
+          coverPic: coverPic,
+          country: country,
           token: token,
         });
       }

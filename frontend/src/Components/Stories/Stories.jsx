@@ -5,7 +5,7 @@ import { AuthContext } from '../../Context/authContext'
 
 const Stories = () => {
 
-    const { currentuser } = useContext(AuthContext)
+    const { user } = useContext(AuthContext)
 
     // Temporary stories with dummy data with id name and image
     const stories = [
@@ -29,8 +29,8 @@ const Stories = () => {
     return (
         <div className='stories'>
             <div className="story">
-                <img src={currentuser.profilePic} alt="" />
-                <span>{currentuser.username}</span>
+                <img src={user.profilePic} alt="" />
+                <span>{user.username}</span>
                 <button>+</button>
             </div>
             {stories.map((story) => (

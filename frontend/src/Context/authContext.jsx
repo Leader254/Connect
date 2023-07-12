@@ -1,23 +1,71 @@
-import { createContext, useEffect, useState } from 'react';
+/* eslint-disable react/prop-types */
+// import axios from 'axios';
+// import { createContext, useEffect, useState, useReducer } from 'react';
+import { createContext, useEffect, useReducer } from 'react';
 
-export const AuthContext = createContext();
+// import { json } from 'react-router-dom';
+
+// export const AuthContext = createContext();
+
+// user context
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "login success":
+      return {
+        user: action.payload,
+      }
+    case "login failed":
+      return {
+        user: null,
+      }
+    case "logout":
+      return {
+        user: null,
+      }
+    default:
+      return state;
+  }
+}
+
+// export const AuthContextProvider = ({ children }) => {
+//   const [currentuser, setCurrentUser] = useState(
+//     JSON.parse(localStorage.getItem('user')) || null
+//   );
+const initial_state = {
+  user: JSON.parse(localStorage.getItem('user')) || null,
+};
+
+export const AuthContext = createContext(initial_state);
 
 export const AuthContextProvider = ({ children }) => {
-  const [currentuser, setCurrentUser] = useState(
-    JSON.parse(localStorage.getItem('user')) || null
-  );
+  const [state, dispatch] = useReducer(reducer, initial_state);
 
-  const login = () => {
-    setCurrentUser({ id: 1, username: 'Sam Dev', profilePic: 'https://avatars.githubusercontent.com/u/105350534?s=400&u=c7ff6e1bce4f9113d125619eb28fa7520a8022e4&v=4'});
+  useEffect(() => {
+    localStorage.setItem('user', JSON.stringify(state.user));
+  }, [state.user]);
 
-  };
 
-useEffect(() => {
-    localStorage.setItem('user', JSON.stringify(currentuser));
-},[currentuser])
+
+
+  // const login = async (inputs) => {
+  //   const res = await axios.post("http://localhost:3000/api/auth/login", inputs, {
+  //     withCredentials: true,
+  //   });
+
+  //   setCurrentUser(res.data)
+  // };
+
+
+
+  // useEffect(() => {
+  //   localStorage.setItem('user', JSON.stringify(currentuser));
+  // }, [currentuser])
 
   return (
-    <AuthContext.Provider value={{ currentuser, login }}>
+    // <AuthContext.Provider value={{ currentuser, login }}>
+    //   {children}
+    // </AuthContext.Provider>
+    <AuthContext.Provider value={{ user: state.user, dispatch }}>
       {children}
     </AuthContext.Provider>
   );

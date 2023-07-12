@@ -9,7 +9,7 @@ import { AuthContext } from '../../Context/authContext'
 
 const Navbar = () => {
 
-    const { currentuser } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
 
     return (
         <div className='navbar'>
@@ -29,8 +29,8 @@ const Navbar = () => {
                     <BiSolidMessageRoundedDetail style={{ fontSize: "30px" }} />
                     <FaBell style={{ fontSize: "30px" }} />
                     <div className="user">
-                        <img src={currentuser.profilePic} alt="" />
-                        <span className='username'>{currentuser.username}</span>
+                        <img src={user.profilePic} alt="" />
+                        <span className='username'>{user.username}</span>
                     </div>
                 </div>
             </div>

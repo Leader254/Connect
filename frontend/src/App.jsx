@@ -10,31 +10,39 @@ import RightBar from './Components/rightBar/rightBar';
 import LeftBar from './Components/leftBar/leftBar';
 import { useContext } from 'react';
 import { AuthContext } from './Context/authContext';
-
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 function App() {
 
-  const { currentuser } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
+
+  const queryClient = new QueryClient();
 
   const Layout = () => {
     return (
-      <div className='theme-dark'>
-        <Navbar />
-        <div style={{ display: "flex" }}>
-          <LeftBar />
-          <div style={{ flex: 6 }}>
-            <Outlet />
-          </div>
+      <QueryClientProvider client={queryClient}>
+        <div className='theme-dark'>
+          <Navbar />
+          <div style={{ display: "flex" }}>
+            <LeftBar />
+            <div style={{ flex: 6 }}>
+              <Outlet />
+            </div>
 
-          <RightBar />
+            <RightBar />
+          </div>
         </div>
-      </div>
+      </QueryClientProvider>
     )
   }
 
   const ProtectedRoute = ({ children }) => {
-    if (!currentuser) {
+    if (!user) {
+      console.log(user)
       return <Navigate to='/login' />
+
     }
     return children
   }
@@ -70,6 +78,7 @@ function App() {
   ])
   return (
     <>
+      <ToastContainer />
       <RouterProvider router={router} />
     </>
   )

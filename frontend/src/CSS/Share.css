@@ -1,0 +1,98 @@
+.share {
+    -webkit-box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
+    -moz-box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
+    box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
+    border-radius: 20px;
+    background-color: white;
+    color: #000;
+    margin-bottom: 20px;
+}
+
+.share .container {
+    padding: 20px;
+}
+
+.share .container .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.share .container .top .left {
+    display: flex;
+    align-items: center;
+    flex: 3;
+}
+
+.share .container .top .left img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.share .container .top .left input {
+    border: none;
+    outline: none;
+    padding: 20px 10px;
+    background-color: transparent;
+    width: 60%;
+    color: black;
+}
+
+.share .container .top .right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.share .container .top .right .file {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 0px;
+}
+
+.share .container hr {
+    margin: 20px 0px;
+    border: none;
+    height: 0.5px;
+    background-color: lightgray;
+}
+
+.share .container .bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.share .container .bottom .left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.share .container .bottom .left .item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.share .container .bottom .left .item img {
+    height: 20px;
+}
+
+.share .container .bottom .left .item span {
+    font-size: 12px;
+    color: rgb(5, 5, 5);
+}
+
+.share .container .bottom .right button {
+    border: none;
+    padding: 5px;
+    color: white;
+    cursor: pointer;
+    background-color: #5271ff;
+    border-radius: 3px;
+}
