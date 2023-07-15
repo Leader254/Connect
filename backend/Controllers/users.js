@@ -1,3 +1,6 @@
+import sql from "mssql";
+import config from "../db/config.js";
+
 export const getUser = async (req, res) => {
   const { id } = req.params;
   try {
@@ -10,12 +13,16 @@ export const getUser = async (req, res) => {
     if (!user) {
       return res.status(400).json({ error: "User does not exist" });
     } else {
-      const { id, firstname, lastname, email } = user;
+      const { id, username, fullname, email, profilePic, coverPic, country } =
+        user;
       return res.status(200).json({
         id: id,
-        firstname: firstname,
-        lastname: lastname,
+        username: username,
+        fullname: fullname,
         email: email,
+        profilePic: profilePic,
+        coverPic: coverPic,
+        country: country,
       });
     }
   } catch (error) {

@@ -1,15 +1,29 @@
 import './Navbar.css'
 import { BiSolidMessageRoundedDetail } from 'react-icons/bi'
-import { BsMoon } from 'react-icons/bs'
 import { FaBell } from 'react-icons/fa'
 import { BiSearchAlt } from 'react-icons/bi'
-import { Link } from 'react-router-dom'
-import { useContext } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useContext, useState } from 'react'
 import { AuthContext } from '../../Context/authContext'
+
 
 const Navbar = () => {
 
-    const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    const [showDropdown, setShowDropdown] = useState(false);
+
+    const { user, dispatch } = useContext(AuthContext);
+
+    const handleProfile = () => {
+        console.log("Profile Clicked")
+        setShowDropdown(!showDropdown)
+    }
+
+    const logout = () => {
+        dispatch({ type: "logout" })
+        navigate('/login')
+    }
 
     return (
         <div className='navbar'>
@@ -25,11 +39,27 @@ const Navbar = () => {
 
                 </div>
                 <div className="right">
-                    <BsMoon style={{ fontSize: "30px" }} />
-                    <BiSolidMessageRoundedDetail style={{ fontSize: "30px" }} />
+                    <Link to='/messenger'>
+                        <BiSolidMessageRoundedDetail style={{ fontSize: '30px' }} />
+                    </Link>
                     <FaBell style={{ fontSize: "30px" }} />
                     <div className="user">
-                        <img src={user.profilePic} alt="" />
+                        <img src={user.profilePic} alt="" style={{ cursor: "pointer" }} onClick={handleProfile} />
+                        {
+                            showDropdown && (
+                                <div className="dropdown">
+                                    {/* <Link to={`/profile/${user.id}`} style={{ textDecoration: "none", color: "inherit" }}>  <span className="dropdownItem">Profile</span></Link> */}
+                                    <ul className="links-to">
+                                        <li>
+                                            Profile
+                                        </li>
+                                        <li onClick={logout}>
+                                            Logout
+                                        </li>
+                                    </ul>
+                                </div>
+                            )
+                        }
                         <span className='username'>{user.username}</span>
                     </div>
                 </div>

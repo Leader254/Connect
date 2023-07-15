@@ -9,8 +9,8 @@ import '../../CSS/Login.css'
 
 const Login = () => {
 
-    const { user, dispatch } = useContext(AuthContext);
-    console.log(user)
+    const { dispatch } = useContext(AuthContext);
+    // console.log(user)
 
     const navigate = useNavigate()
 

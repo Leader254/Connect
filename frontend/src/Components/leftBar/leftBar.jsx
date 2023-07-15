@@ -39,7 +39,7 @@ const LeftBar = () => {
                     <span>Your Profile</span>
                     <div className="item">
                         <FaUserCircle className="icon" />
-                        <img src={user.profilePic} alt="" />
+                        {/* <img src={user.profilePic} alt="" /> */}
                         <span>Profile</span>
                     </div>
                 </div>

@@ -5,9 +5,9 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Context/authContext";
 import { storage } from '../../firebase';
 import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage'
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
-import { apiDomain } from '../../utils/utils';
+// import { useMutation, useQueryClient } from '@tanstack/react-query';
+// import axios from 'axios';
+// import { apiDomain } from '../../utils/utils';
 
 
 const Share = () => {
@@ -18,19 +18,19 @@ const Share = () => {
     const imageListRef = ref(storage, "images/")
     const { user } = useContext(AuthContext);
 
-    const queryClient = useQueryClient();
+    // const queryClient = useQueryClient();
 
-    const mutation = useMutation(
-        (newPost) => {
-            return axios.post(`${apiDomain}/api/posts`, newPost);
-        },
-        {
-            onSuccess: () => {
-                // Invalidate and refetch
-                queryClient.invalidateQueries(["posts"]);
-            },
-        }
-    );
+    // const mutation = useMutation(
+    //     (newPost) => {
+    //         return axios.post(`${apiDomain}/api/posts`, newPost);
+    //     },
+    //     {
+    //         onSuccess: () => {
+    //             // Invalidate and refetch
+    //             queryClient.invalidateQueries(["posts"]);
+    //         },
+    //     }
+    // );
     // console.log(file)
 
     const uploadImage = async (e) => {
@@ -51,7 +51,7 @@ const Share = () => {
             image: imgUrl,
         };
 
-        mutation.mutate(newPost);
+        // mutation.mutate(newPost);
 
         setFile(null);
         setDescription("");

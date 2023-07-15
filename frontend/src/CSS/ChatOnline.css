@@ -1,0 +1,35 @@
+.onlineFriend {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    /* padding: 10px;
+    transition: all 0.3s ease;
+    border-radius: 10px; */
+}
+
+.onlineImgContainer {
+    position: relative;
+    margin-right: 10px;
+}
+
+.onlineBadge {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: limegreen;
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    border: 2px solid white;
+}
+
+.onlineImg {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+    border: 1px solid white;
+}

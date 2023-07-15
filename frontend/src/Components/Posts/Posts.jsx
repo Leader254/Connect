@@ -17,8 +17,6 @@ const Posts = () => {
             })
     )
 
-
-
     return (
         <div className='posts'>
             {error

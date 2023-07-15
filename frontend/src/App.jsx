@@ -8,11 +8,13 @@ import Home from './Pages/Home/Home';
 import Profile from './Pages/Profile/Profile';
 import RightBar from './Components/rightBar/rightBar';
 import LeftBar from './Components/leftBar/leftBar';
+import Messenger from './Pages/Messenger/Messenger';
 import { useContext } from 'react';
 import { AuthContext } from './Context/authContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import Update from './Components/Update/Update'
 
 function App() {
 
@@ -74,7 +76,16 @@ function App() {
     {
       path: '/register',
       element: <Register />
+    },
+    {
+      path: '/messenger',
+      element: <Messenger />
+    },
+    {
+      path: '/update/:id',
+      element: <Update />
     }
+
   ])
   return (
     <>

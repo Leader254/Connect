@@ -23,7 +23,7 @@ const Stories = () => {
             id: 3,
             name: 'John Doe',
             image: 'https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
-        },
+        }
     ]
 
     return (

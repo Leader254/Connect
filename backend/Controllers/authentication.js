@@ -44,6 +44,56 @@ export const Register = async (req, res) => {
 };
 
 // Login logic
+// export const Login = async (req, res) => {
+//   const { username, password } = req.body;
+//   try {
+//     let pool = await sql.connect(config.sql);
+//     let result = await pool
+//       .request()
+//       .input("username", sql.VarChar, username)
+//       .query(
+//         "SELECT *, profilePic, coverPic, country FROM Users WHERE username = @username"
+//       );
+
+//     const user = result.recordset[0];
+//     if (!user) {
+//       return res.status(400).json({ error: "User does not exist" });
+//     } else {
+//       const validPassword = bcrypt.compareSync(password, user.password);
+//       if (!validPassword) {
+//         return res.status(400).json({ error: "Invalid username or password" });
+//       } else {
+//         const token = `JWT ${jwt.sign(
+//           {
+//             id: user.id,
+//             username: user.username,
+//             fullname: user.fullname,
+//             email: user.email,
+//           },
+//           config.jwt_secret
+//         )}`;
+
+//         const { id, username, email, fullname, profilePic, coverPic, country } =
+//           user;
+//         return res.status(200).json({
+//           id: id,
+//           username: username,
+//           email: email,
+//           fullname: fullname,
+//           profilePic: profilePic,
+//           coverPic: coverPic,
+//           country: country,
+//           token: token,
+//         });
+//       }
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json({ error: "Error occured while logging in" });
+//   } finally {
+//     sql.close();
+//   }
+// };
 export const Login = async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -75,6 +125,9 @@ export const Login = async (req, res) => {
 
         const { id, username, email, fullname, profilePic, coverPic, country } =
           user;
+
+        res.cookie("accessToken", token, { httpOnly: true }); // Set the token as a cookie
+
         return res.status(200).json({
           id: id,
           username: username,
@@ -83,13 +136,13 @@ export const Login = async (req, res) => {
           profilePic: profilePic,
           coverPic: coverPic,
           country: country,
-          token: token,
+          // token: token,
         });
       }
     }
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ error: "Error occured while logging in" });
+    return res.status(500).json({ error: "Error occurred while logging in" });
   } finally {
     sql.close();
   }
