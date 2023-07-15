@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import jwt from "jsonwebtoken";
 import authRoute from "./Routes/authRoutes.js";
 import postRoute from "./Routes/postsRoutes.js";
-// import commentRoute from "./Routes/commentsRoutes.js";
+import commentRoute from "./Routes/commentsRoutes.js";
 import userRoute from "./Routes/usersRoutes.js";
 // import likeRoute from "./Routes/likesRoutes.js";
 
@@ -31,7 +31,7 @@ app.use(
 app.use(cookieParser());
 app.use("/api/auth", authRoute);
 app.use("/api/posts", postRoute);
-// app.use("/api/comments", commentRoute);
+app.use("/api/comments", commentRoute);
 app.use("/api/users", userRoute);
 // app.use("/api/likes", likeRoute);
 

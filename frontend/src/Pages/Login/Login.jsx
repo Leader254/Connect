@@ -25,7 +25,9 @@ const Login = () => {
 
     const onSubmitHandler = async (data) => {
         try {
-            let result = await axios.post('http://localhost:3000/api/auth/login', data)
+            let result = await axios.post('http://localhost:3000/api/auth/login', data, {
+                withCredentials: true,
+            });
             console.log(result.data);
             dispatch({ type: 'login success', payload: result.data })
             alert('Login Success')

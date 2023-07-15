@@ -7,14 +7,15 @@ import axios from 'axios'
 
 const Posts = () => {
 
-    const { isLoading, error, data } = useQuery(['posts'], () =>
+    const makeRequest = axios.create({
+        baseURL: apiDomain,
+        withCredentials: true,
+    });
 
-        // axios
-        axios.get(`${apiDomain}/api/posts`)
-            .then((res) => {
-                console.log(data)
-                return res.data
-            })
+    const { isLoading, error, data } = useQuery(['posts'], () =>
+        makeRequest
+            .get('/api/posts')
+            .then((res) => res.data)
     )
 
     return (

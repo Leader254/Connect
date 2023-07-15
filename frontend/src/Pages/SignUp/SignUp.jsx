@@ -125,27 +125,3 @@ const SignUp = () => {
 }
 
 export default SignUp
-
-
-// const SignUp = () => {
-//     const [inputs, setInputs] = useState({
-//         username: "",
-//         email: "",
-//         password: "",
-//         name: "",
-//     });
-//     const [err, setErr] = useState(null);
-
-//     const handleChange = (e) => {
-//         setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-//     };
-
-//     const handleRegister = async (e) => {
-//         e.preventDefault();
-
-//         try {
-//             await axios.post("http://localhost:3000/api/auth/register", inputs);
-//         } catch (err) {
-//             setErr(err.response.data);
-//         }
-//     };

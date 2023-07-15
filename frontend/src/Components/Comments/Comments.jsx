@@ -1,38 +1,65 @@
+/* eslint-disable react/prop-types */
 import '../../CSS/Comments.css'
 import { AuthContext } from '../../Context/authContext'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { BsFillSendFill } from 'react-icons/bs'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import axios from 'axios'
+import { apiDomain } from '../../utils/utils'
+import moment from 'moment'
 
-const Comments = () => {
+const Comments = ({ postId }) => {
+
+    const [description, setDescription] = useState("")
 
     const { user } = useContext(AuthContext)
 
-    const comments = [
-        {
-            id: 1,
-            desc: "Informative article son, i like how you progress.",
-            name: 'Grace Nduta',
-            userId: 1,
-            profilePic: "https://images.pexels.com/photos/16961306/pexels-photo-16961306/free-photo-of-fashion-person-people-woman.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    const makeRequest = axios.create({
+        baseURL: apiDomain,
+        withCredentials: true,
+    });
+
+    const { isLoading, error, data } = useQuery(['comments'], () =>
+        makeRequest
+            .get("/api/comments?postId=" + postId)
+            .then((res) => res.data)
+
+    );
+    const queryClient = useQueryClient();
+
+    const mutation = useMutation(
+        (newComment) => {
+            return axios.post(`${apiDomain}/api/comments`, newComment);
         },
         {
-            id: 2,
-            desc: "I like how you structure your folders nowadays, simple and easy to understand.",
-            name: 'Mark Wahome',
-            userId: 2,
-            profilePic: "https://images.pexels.com/photos/7148455/pexels-photo-7148455.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load",
-        },
-    ]
+            onSuccess: () => {
+                // Invalidate and refetch
+                queryClient.invalidateQueries(["comments"]);
+            },
+        }
+    );
+    const handleComment = async (e) => {
+        e.preventDefault();
+        const comment = {
+            description: description,
+            postId: postId,
+        };
+        mutation.mutate(comment);
+        console.log(comment)
+        setDescription("");
+    };
+
+
     return (
         <div className='comments'>
             <div className="new">
                 <img src={user.profilePic} alt="" />
                 <div className="text">
-                    <input type="text" placeholder='Write a comment...' />
-                    <BsFillSendFill style={{ cursor: "pointer" }} />
+                    <input type="text" placeholder='Write a comment...' value={description} onChange={(e) => setDescription(e.target.value)} />
+                    <BsFillSendFill style={{ cursor: "pointer" }} onClick={handleComment} />
                 </div>
             </div>
-            {comments.map((comment) => (
+            {isLoading ? "loading" : data.map((comment) => (
                 <div className="comment" key={comment.id}>
                     <img src={comment.profilePic} alt="" />
                     <div className="replies">
@@ -40,7 +67,9 @@ const Comments = () => {
                         <p>{comment.desc}</p>
                         <hr className='line' />
                     </div>
-                    <span className='date'>1 hour ago</span>
+                    <span className='date'>{
+                        moment(comment.createdAt).fromNow()
+                    }</span>
                 </div>
             ))}
         </div>

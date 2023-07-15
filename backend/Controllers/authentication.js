@@ -101,19 +101,17 @@ export const Login = async (req, res) => {
     let result = await pool
       .request()
       .input("username", sql.VarChar, username)
-      .query(
-        "SELECT *, profilePic, coverPic, country FROM Users WHERE username = @username"
-      );
+      .query("SELECT * FROM Users WHERE username = @username");
 
     const user = result.recordset[0];
     if (!user) {
-      return res.status(400).json({ error: "User does not exist" });
+      return res.status(404).json({ error: "User does not exist" });
     } else {
       const validPassword = bcrypt.compareSync(password, user.password);
       if (!validPassword) {
         return res.status(400).json({ error: "Invalid username or password" });
       } else {
-        const token = `JWT ${jwt.sign(
+        const token = jwt.sign(
           {
             id: user.id,
             username: user.username,
@@ -121,23 +119,16 @@ export const Login = async (req, res) => {
             email: user.email,
           },
           config.jwt_secret
-        )}`;
+        );
 
-        const { id, username, email, fullname, profilePic, coverPic, country } =
-          user;
+        const { password, ...userWithoutPassword } = user;
 
-        res.cookie("accessToken", token, { httpOnly: true }); // Set the token as a cookie
-
-        return res.status(200).json({
-          id: id,
-          username: username,
-          email: email,
-          fullname: fullname,
-          profilePic: profilePic,
-          coverPic: coverPic,
-          country: country,
-          // token: token,
-        });
+        res
+          .cookie("accessToken", token, {
+            httpOnly: true,
+          })
+          .status(200)
+          .json(userWithoutPassword);
       }
     }
   } catch (error) {
@@ -151,7 +142,7 @@ export const Login = async (req, res) => {
 // Logout logic
 export const Logout = async (req, res) => {
   res
-    .clearCookie("token", {
+    .clearCookie("accessToken", {
       sameSite: "none",
       secure: true,
     })
