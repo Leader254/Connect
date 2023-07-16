@@ -14,7 +14,7 @@ const Comments = ({ postId }) => {
 
     const { user } = useContext(AuthContext)
 
-    const makeRequest = axios.create({
+    let makeRequest = axios.create({
         baseURL: apiDomain,
         withCredentials: true,
     });
@@ -29,7 +29,8 @@ const Comments = ({ postId }) => {
 
     const mutation = useMutation(
         (newComment) => {
-            return axios.post(`${apiDomain}/api/comments`, newComment);
+            return makeRequest.post("/api/comments", newComment,
+            );
         },
         {
             onSuccess: () => {
@@ -40,12 +41,12 @@ const Comments = ({ postId }) => {
     );
     const handleComment = async (e) => {
         e.preventDefault();
-        const comment = {
+        const postComment = {
             description: description,
             postId: postId,
         };
-        mutation.mutate(comment);
-        console.log(comment)
+        mutation.mutate(postComment);
+        console.log(postComment)
         setDescription("");
     };
 
@@ -64,7 +65,7 @@ const Comments = ({ postId }) => {
                     <img src={comment.profilePic} alt="" />
                     <div className="replies">
                         <span>{comment.name}</span>
-                        <p>{comment.desc}</p>
+                        <p>{comment.description}</p>
                         <hr className='line' />
                     </div>
                     <span className='date'>{
@@ -76,4 +77,4 @@ const Comments = ({ postId }) => {
     )
 }
 
-export default Comments
+export default Comments;

@@ -6,7 +6,7 @@ import authRoute from "./Routes/authRoutes.js";
 import postRoute from "./Routes/postsRoutes.js";
 import commentRoute from "./Routes/commentsRoutes.js";
 import userRoute from "./Routes/usersRoutes.js";
-// import likeRoute from "./Routes/likesRoutes.js";
+import likeRoute from "./Routes/likesRoutes.js";
 
 import cookieParser from "cookie-parser";
 
@@ -33,7 +33,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/posts", postRoute);
 app.use("/api/comments", commentRoute);
 app.use("/api/users", userRoute);
-// app.use("/api/likes", likeRoute);
+app.use("/api/likes", likeRoute);
 
 app.get("/", (req, res) => {
   res.send("Hello and welcome to the server");

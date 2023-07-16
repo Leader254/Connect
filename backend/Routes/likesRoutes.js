@@ -1,19 +1,11 @@
-// import express from "express";
+import express from "express";
 
-// import {
-//   createLike,
-//   updateComment,
-//   allPosts,
-//   deleteComment,
-//   getComment,
-// } from "../Controllers/comments.js";
+import { getLikes, addLike, deleteLike } from "../Controllers/likes.js";
 
-// const router = express.Router();
+const router = express.Router();
 
-// router.post("/create", createComment);
-// router.put("/update/:commentId", updateComment);
-// router.get("/posts", allPosts);
-// router.delete("/delete/:commentId", deleteComment);
-// router.get("/find/:commentId", getComment);
+router.post("/", addLike);
+router.get("/", getLikes);
+router.delete("/", deleteLike);
 
-// export default router;
+export default router;

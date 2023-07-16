@@ -12,21 +12,62 @@ import { MdDelete } from 'react-icons/md'
 import { BiSolidPencil } from 'react-icons/bi'
 import moment from "moment"
 import axios from 'axios'
+import { useContext } from 'react'
+import { AuthContext } from '../../Context/authContext'
 import { apiDomain } from '../../utils/utils'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const Post = ({ post }) => {
+
+    const { user } = useContext(AuthContext)
+
 
     const [commentView, setCommentView] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
     const navigate = useNavigate();
 
-    const liked = false;
+    const makeRequest = axios.create({
+        baseURL: apiDomain,
+        withCredentials: true,
+    });
+
+    const { isLoading, error, data } = useQuery(["likes", post.id], () =>
+        makeRequest
+            .get('/api/likes?postId=' + post.id)
+            .then((res) => res.data)
+    )
+    // console.log(data)
+
+    const queryClient = useQueryClient();
+    const mutation = useMutation(
+        (liked) => {
+            // return axios.post(`${apiDomain}/api/likes`, post.id);
+            if (!liked) {
+                return makeRequest.post("/api/likes", { postId: post.id });
+            } else {
+                return makeRequest.delete("/api/likes?postId=" + post.id);
+            }
+        },
+        {
+            onSuccess: () => {
+                // Invalidate and refetch
+                queryClient.invalidateQueries(["likes"]);
+            },
+        }
+    );
+
+    const handleLike = () => {
+        mutation.mutate(
+            data && data.includes(user.id)
+        )
+    }
 
     const handleMore = (e) => {
         e.preventDefault()
         setShowDropdown(!showDropdown)
         // console.log("More button Clicked")
     }
+
 
     const handleDelete = async () => {
         try {
@@ -91,12 +132,12 @@ const Post = ({ post }) => {
                 </div>
                 <div className="interactions">
                     <div className="item">
-                        {liked ? <AiFillLike className='icon' /> : <BiLike className='icon' />}
-                        20 Likes
+                        {isLoading ? "loading" : data && data.includes(user.id) ? <AiFillLike className='icon' onClick={handleLike} /> : <BiLike className='icon' onClick={handleLike} />}
+                        {data && data.length} Likes
                     </div>
                     <div className="item" onClick={() => setCommentView(!commentView)}>
                         <FaRegComments className='icon' />
-                        20 Comments
+                        {data && data.length} Comments
                     </div>
                     <div className="item">
                         <FiShare2 />

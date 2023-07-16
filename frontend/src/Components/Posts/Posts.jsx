@@ -12,7 +12,7 @@ const Posts = () => {
         withCredentials: true,
     });
 
-    const { isLoading, error, data } = useQuery(['posts'], () =>
+    const { isLoading, error, data } = useQuery(["posts"], () =>
         makeRequest
             .get('/api/posts')
             .then((res) => res.data)

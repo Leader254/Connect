@@ -8,8 +8,27 @@ import { FiMail } from 'react-icons/fi'
 import { VscLocation } from 'react-icons/vsc'
 import { FiMoreHorizontal } from 'react-icons/fi'
 import Posts from '../../Components/Posts/Posts'
+import { apiDomain } from '../../utils/utils'
+import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
+import { useLocation } from 'react-router-dom'
 
 const Profile = () => {
+
+  const userId = useLocation().pathname.split("/")[2]
+
+  const makeRequest = axios.create({
+    baseURL: apiDomain,
+    withCredentials: true,
+  });
+
+  const { isLoading, error, data } = useQuery(["user"], () =>
+    makeRequest
+      .get('/api/users/find/' + userId)
+      .then((res) => res.data)
+  )
+  console.log(data);
+
   return (
     <div className='profile'>
       <div className="images">
