@@ -7,8 +7,10 @@ import config from "../db/config.js";
 export const Register = async (req, res) => {
   const { username, email, fullname, password } = req.body;
   const hash = bcrypt.hashSync(password, 10);
+
+  let pool;
   try {
-    let pool = await sql.connect(config.sql);
+    pool = await sql.connect(config.sql);
     let result = await pool
       .request()
       .input("username", sql.VarChar, username)
@@ -39,14 +41,18 @@ export const Register = async (req, res) => {
       .status(500)
       .json({ error: "Error occured while creating the user" });
   } finally {
-    sql.close();
+    if (pool) {
+      await pool.close();
+    }
   }
 };
 
 export const Login = async (req, res) => {
   const { username, password } = req.body;
+
+  let pool;
   try {
-    let pool = await sql.connect(config.sql);
+    pool = await sql.connect(config.sql);
     let result = await pool
       .request()
       .input("username", sql.VarChar, username)
@@ -86,7 +92,9 @@ export const Login = async (req, res) => {
     console.log(error);
     return res.status(500).json({ error: "Error occurred while logging in" });
   } finally {
-    sql.close();
+    if (pool) {
+      await pool.close();
+    }
   }
 };
 

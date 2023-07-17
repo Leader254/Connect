@@ -14,8 +14,9 @@ export const createComment = async (req, res) => {
     if (err) return res.status(403).json({ error: "Token is not valid" });
     const userId = decoded.id;
 
+    let pool;
     try {
-      let pool = await sql.connect(config.sql);
+      pool = await sql.connect(config.sql);
       await pool
         .request()
         .input("description", sql.VarChar, description)
@@ -29,6 +30,10 @@ export const createComment = async (req, res) => {
     } catch (error) {
       console.log(error);
       return res.status(500).json({ error: error });
+    } finally {
+      if (pool) {
+        await pool.close();
+      }
     }
   });
 };
@@ -36,8 +41,9 @@ export const createComment = async (req, res) => {
 // GET ALL COMMENTS CONTROLLER
 export const getAllComments = async (req, res) => {
   const { postId } = req.query;
+  let pool;
   try {
-    let pool = await sql.connect(config.sql);
+    pool = await sql.connect(config.sql);
     let result = await pool
       .request()
       .input("postId", sql.Int, postId)
@@ -48,6 +54,10 @@ export const getAllComments = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: "Error retrieving" });
+  } finally {
+    if (pool) {
+      await pool.close();
+    }
   }
 };
 

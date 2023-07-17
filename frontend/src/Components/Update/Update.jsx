@@ -1,119 +1,153 @@
-import '../../CSS/Share.css'
-import { BiImage } from 'react-icons/bi'
-import { FaUserFriends } from 'react-icons/fa'
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../Context/authContext";
+/* eslint-disable react/prop-types */
+import { useState } from 'react';
+import '../../CSS/Update.css';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { storage } from '../../firebase';
-import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage'
-// import { useMutation, useQueryClient } from '@tanstack/react-query';
-// import axios from 'axios';
-// import { apiDomain } from '../../utils/utils';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import axios from 'axios';
+import { apiDomain } from '../../utils/utils';
 
+const Update = ({ setOpenUpdate, user }) => {
+    const [cover, setCover] = useState(null);
+    const [profile, setProfile] = useState(null);
+    const [texts, setTexts] = useState({
+        email: user.email,
+        username: user.username,
+        fullname: user.fullname,
+        country: user.country,
+    });
 
-const Share = () => {
-    const [file, setFile] = useState(null);
-    const [description, setDescription] = useState("");
-    const [imageList, setImageList] = useState([])
-
-    const imageListRef = ref(storage, "images/")
-    const { user } = useContext(AuthContext);
-
-    // const queryClient = useQueryClient();
-
-    // const mutation = useMutation(
-    //     (newPost) => {
-    //         return axios.post(`${apiDomain}/api/posts`, newPost);
-    //     },
-    //     {
-    //         onSuccess: () => {
-    //             // Invalidate and refetch
-    //             queryClient.invalidateQueries(["posts"]);
-    //         },
-    //     }
-    // );
-    // console.log(file)
-
-    const uploadImage = async (e) => {
-        e.preventDefault();
-        if (file == null) return;
-
-        let imgUrl = "";
-        if (file) {
-            const imageRef = ref(storage, `images/${file.name}`);
-            await uploadBytes(imageRef, file);
-            imgUrl = await getDownloadURL(imageRef);
-        }
-
-        const newPost = {
-            description: description,
-            userId: user.id,
-            createdAt: new Date().toISOString(),
-            image: imgUrl,
-        };
-
-        // mutation.mutate(newPost);
-
-        setFile(null);
-        setDescription("");
+    const handleChange = (e) => {
+        setTexts((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
+    const queryClient = useQueryClient();
 
-    useEffect(() => {
-        listAll(imageListRef).then((res) => {
-            res.items.forEach((item) => {
-                getDownloadURL(item).then((url) => {
-                    setImageList((prev) => [...prev, url])
-                })
-            })
-        })
-    }, [])
+    const mutation = useMutation(
+        (user) => {
+            return axios.put(`${apiDomain}/api/users`, user);
+        },
+        {
+            onSuccess: () => {
+                // Invalidate and refetch
+                queryClient.invalidateQueries(['user']);
+            },
+        }
+    );
+
+    const handleClick = async (e) => {
+        e.preventDefault();
+
+        let coverUrl = user.coverPic;
+        let profileUrl = user.profilePic;
+
+        if (cover) {
+            coverUrl = await uploadImage(cover);
+        }
+
+        if (profile) {
+            profileUrl = await uploadImage(profile);
+        }
+
+        mutation.mutate({
+            ...texts,
+            coverPic: coverUrl,
+            profilePic: profileUrl,
+        });
+
+        setOpenUpdate(false);
+        setCover(null);
+        setProfile(null);
+    };
+
+    const uploadImage = async (file) => {
+        const imageRef = ref(storage, `images/${file.name}`);
+        await uploadBytes(imageRef, file);
+        const imgUrl = await getDownloadURL(imageRef);
+        return imgUrl;
+    };
 
     return (
-        <div className="share">
-            <div className="container">
-                <div className="top">
-                    <div className="left">
-                        <img src={user.profilePic} alt="" />
-                        <input
-                            type="text"
-                            placeholder={`What's on your mind ${user.username}?`}
-                            onChange={(e) => setDescription(e.target.value)}
-                            value={description}
-                        />
-                    </div>
-                    <div className="right">
-                        {file && (
-                            <img className="file" alt="" src={URL.createObjectURL(file)} />
-                        )}
-                    </div>
-                </div>
-                <hr />
-                <div className="bottom">
-                    <div className="left">
-                        <input
-                            type="file"
-                            id="file"
-                            style={{ display: "none" }}
-                            onChange={(e) => setFile(e.target.files[0])}
-                        />
-                        <label htmlFor="file">
-                            <div className="item">
-                                <BiImage className="icon" />
-                                <span>Add Image</span>
+        <div className="update">
+            <div className="wrapper">
+                <h1>Update Your Profile</h1>
+                <form>
+                    <div className="files">
+                        <label htmlFor="cover">
+                            <span>Cover Picture</span>
+                            <div className="imgContainer">
+                                <img
+                                    src={
+                                        cover
+                                            ? URL.createObjectURL(cover)
+                                            : "/images/" + user.coverPic
+                                    }
+                                    alt=""
+                                />
                             </div>
                         </label>
-                        <div className="item">
-                            <FaUserFriends className="icon" />
-                            <span>Tag Friends</span>
-                        </div>
+                        <input
+                            type="file"
+                            id="cover"
+                            style={{ display: 'none' }}
+                            onChange={(e) => setCover(e.target.files[0])}
+                        />
+                        <label htmlFor="profile">
+                            <span>Profile Picture</span>
+                            <div className="imgContainer">
+                                <img
+                                    src={
+                                        profile
+                                            ? URL.createObjectURL(profile)
+                                            : "/images" + user.profilePic
+                                    }
+                                    alt=""
+                                />
+                            </div>
+                        </label>
+                        <input
+                            type="file"
+                            id="profile"
+                            style={{ display: 'none' }}
+                            onChange={(e) => setProfile(e.target.files[0])}
+                        />
                     </div>
-                    <div className="right">
-                        <button onClick={uploadImage}>Share</button>
-                    </div>
-                </div>
+                    <label>Email</label>
+                    <input
+                        type="text"
+                        value={texts.email}
+                        name="email"
+                        onChange={handleChange}
+                    />
+                    <label>Username</label>
+                    <input
+                        type="text"
+                        value={texts.username}
+                        name="usernae"
+                        onChange={handleChange}
+                    />
+                    <label>Fullname</label>
+                    <input
+                        type="text"
+                        value={texts.fullname}
+                        name="fullname"
+                        onChange={handleChange}
+                    />
+                    <label>Country</label>
+                    <input
+                        type="text"
+                        name="country"
+                        value={texts.country}
+                        onChange={handleChange}
+                    />
+                    <button onClick={handleClick}>Update</button>
+                </form>
+                <button className="close" onClick={() => setOpenUpdate(false)}>
+                    close
+                </button>
             </div>
         </div>
     );
 };
 
-export default Share;
+export default Update;

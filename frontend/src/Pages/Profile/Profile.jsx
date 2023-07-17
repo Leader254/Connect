@@ -8,70 +8,117 @@ import { FiMail } from 'react-icons/fi'
 import { VscLocation } from 'react-icons/vsc'
 import { FiMoreHorizontal } from 'react-icons/fi'
 import Posts from '../../Components/Posts/Posts'
-import { apiDomain } from '../../utils/utils'
-import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
+// import { apiDomain } from '../../utils/utils'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+// import axios from 'axios'
 import { useLocation } from 'react-router-dom'
+import { useContext, useState } from 'react'
+import { AuthContext } from '../../Context/authContext'
+import { makeRequest } from '../../utils/utils'
+import Update from '../../Components/Update/Update'
 
 const Profile = () => {
 
-  const userId = useLocation().pathname.split("/")[2]
+  const [showUpdate, setShowUpdate] = useState(false)
 
-  const makeRequest = axios.create({
-    baseURL: apiDomain,
-    withCredentials: true,
-  });
+  const { user } = useContext(AuthContext)
 
-  const { isLoading, error, data } = useQuery(["user"], () =>
+  const userId = parseInt(useLocation().pathname.split("/")[2])
+
+  // let makeRequest = axios.create({
+  //   baseURL: apiDomain,
+  //   withCredentials: true,
+  // });
+
+  const { isLoading, data } = useQuery(["user"], () =>
     makeRequest
-      .get('/api/users/find/' + userId)
+      .get('/users/find/' + userId)
       .then((res) => res.data)
   )
-  console.log(data);
+  // console.log(data);
+
+  const { isLoading: relationshipLoading, data: relationshipData } = useQuery(["relationship"], () =>
+    makeRequest
+      .get('/relationships?followedUserId=' + userId)
+      .then((res) => res.data)
+  )
+  console.log(relationshipData);
+
+  const queryClient = useQueryClient();
+  const mutation = useMutation(
+    (following) => {
+      if (!following) {
+        return makeRequest.post("/relationships", { userId });
+      } else {
+        return makeRequest.delete("/relationships?userId=" + userId);
+      }
+    },
+    {
+      onSuccess: () => {
+        // Invalidate and refetch
+        queryClient.invalidateQueries(["relationship"]);
+      },
+    }
+  );
+
+  const handleFollow = () => {
+    mutation.mutate(
+      relationshipData && relationshipData.includes(user.id)
+    )
+  }
 
   return (
     <div className='profile'>
-      <div className="images">
-        <img src="https://images.pexels.com/photos/3429058/pexels-photo-3429058.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load" alt="" className='cover' />
-        <img src="https://avatars.githubusercontent.com/u/105350534?s=400&u=c7ff6e1bce4f9113d125619eb28fa7520a8022e4&v=4" alt="" className='profilepic' />
-      </div>
-      <div className="profile-container">
-        <div className="user-info">
-          <div className="left">
-            <a href="facebook.com">
-              <FaFacebook className='icon' />
-            </a>
-            <a href="instagram.com">
-              <FaInstagram className='icon' />
-            </a>
-            <a href="twitter.com">
-              <FaTwitter className='icon' />
-            </a>
-            <a href="linkedin.com">
-              <FaLinkedin className='icon' />
-            </a>
-            <a href="github.com">
-              <FaGithub className='icon' />
-            </a>
+      {isLoading ? (
+        "loading"
+      ) : (
+        <>
+          <div className="images">
+            <img src={data && data.coverPic} alt="" className='cover' />
+            <img src={data && data.profilePic} alt="" className='profilepic' />
           </div>
-          <div className="center">
-            <span>Jane Doe</span>
-            <div className="info">
-              <div className="item" style={{ display: "flex", align: "Itemscenter", justifyContent: "center" }}>
-                <VscLocation />
-                <span style={{ fontSize: "15px" }}>Kenya</span>
+          <div className="profile-container">
+            <div className="user-info">
+              <div className="left">
+                <a href="facebook.com">
+                  <FaFacebook className='icon' />
+                </a>
+                <a href="instagram.com">
+                  <FaInstagram className='icon' />
+                </a>
+                <a href="twitter.com">
+                  <FaTwitter className='icon' />
+                </a>
+                <a href="linkedin.com">
+                  <FaLinkedin className='icon' />
+                </a>
+                <a href="github.com">
+                  <FaGithub className='icon' />
+                </a>
+              </div>
+              <div className="center">
+                <span>{data && data.fullname}</span>
+                <div className="info">
+                  <div className="item" style={{ display: "flex", align: "Itemscenter", justifyContent: "center" }}>
+                    <VscLocation />
+                    <span style={{ fontSize: "15px" }}>{data && data.country}</span>
+                  </div>
+                </div>
+                {relationshipLoading ? "Loading" : userId === user.id ? <button onClick={() => setShowUpdate(true)}>Update</button> : <button className='follow-profile' onClick={handleFollow}>
+                  {relationshipData && relationshipData.includes(user.id) ? "Unfollow" : "Follow"}
+                </button>}
+              </div>
+              <div className="right">
+                <FiMail style={{ fontSize: "25px" }} />
+                <FiMoreHorizontal style={{ fontSize: "25px" }} />
               </div>
             </div>
-            <button className='follow-profile'>Follow</button>
+            <Posts userId={userId} />
           </div>
-          <div className="right">
-            <FiMail style={{ fontSize: "25px" }} />
-            <FiMoreHorizontal style={{ fontSize: "25px" }} />
-          </div>
-        </div>
-        <Posts />
-      </div>
-    </div>
+        </>
+      )}
+      {showUpdate && <Update setShowUpdate={setShowUpdate} user={data} />}
+    </div >
   )
 }
 

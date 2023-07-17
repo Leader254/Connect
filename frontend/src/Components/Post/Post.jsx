@@ -41,7 +41,6 @@ const Post = ({ post }) => {
     const queryClient = useQueryClient();
     const mutation = useMutation(
         (liked) => {
-            // return axios.post(`${apiDomain}/api/likes`, post.id);
             if (!liked) {
                 return makeRequest.post("/api/likes", { postId: post.id });
             } else {
