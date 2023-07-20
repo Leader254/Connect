@@ -4,17 +4,19 @@ import '../../CSS/Update.css';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { storage } from '../../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import axios from 'axios';
-import { apiDomain } from '../../utils/utils';
+import { toast } from "react-toastify"
+import { makeRequest } from '../../utils/utils';
+import Loading from '../../Pages/Loading/Loading';
 
 const Update = ({ setOpenUpdate, user }) => {
+    const [loading, setLoading] = useState(false)
     const [cover, setCover] = useState(null);
     const [profile, setProfile] = useState(null);
     const [texts, setTexts] = useState({
-        email: user.email,
-        username: user.username,
-        fullname: user.fullname,
-        country: user.country,
+        email: user.email || '',
+        username: user.username || '',
+        fullname: user.fullname || '',
+        country: user.country || '',
     });
 
     const handleChange = (e) => {
@@ -25,7 +27,7 @@ const Update = ({ setOpenUpdate, user }) => {
 
     const mutation = useMutation(
         (user) => {
-            return axios.put(`${apiDomain}/api/users`, user);
+            return makeRequest.put("/users/update", user);
         },
         {
             onSuccess: () => {
@@ -37,6 +39,7 @@ const Update = ({ setOpenUpdate, user }) => {
 
     const handleClick = async (e) => {
         e.preventDefault();
+        setLoading(true)
 
         let coverUrl = user.coverPic;
         let profileUrl = user.profilePic;
@@ -55,6 +58,11 @@ const Update = ({ setOpenUpdate, user }) => {
             profilePic: profileUrl,
         });
 
+        toast.success("Account Updated Successfully", {
+            position: toast.POSITION.TOP_CENTER,
+            autoclose: 1000
+        });
+        setLoading(false)
         setOpenUpdate(false);
         setCover(null);
         setProfile(null);
@@ -69,6 +77,7 @@ const Update = ({ setOpenUpdate, user }) => {
 
     return (
         <div className="update">
+            {loading && <Loading />}
             <div className="wrapper">
                 <h1>Update Your Profile</h1>
                 <form>
@@ -77,11 +86,7 @@ const Update = ({ setOpenUpdate, user }) => {
                             <span>Cover Picture</span>
                             <div className="imgContainer">
                                 <img
-                                    src={
-                                        cover
-                                            ? URL.createObjectURL(cover)
-                                            : "/images/" + user.coverPic
-                                    }
+                                    src={cover ? URL.createObjectURL(cover) : (user.coverPic ? user.coverPic : "")}
                                     alt=""
                                 />
                             </div>
@@ -96,11 +101,7 @@ const Update = ({ setOpenUpdate, user }) => {
                             <span>Profile Picture</span>
                             <div className="imgContainer">
                                 <img
-                                    src={
-                                        profile
-                                            ? URL.createObjectURL(profile)
-                                            : "/images" + user.profilePic
-                                    }
+                                    src={profile ? URL.createObjectURL(profile) : (user.profilePic ? user.profilePic : "")}
                                     alt=""
                                 />
                             </div>
@@ -123,7 +124,7 @@ const Update = ({ setOpenUpdate, user }) => {
                     <input
                         type="text"
                         value={texts.username}
-                        name="usernae"
+                        name="username"
                         onChange={handleChange}
                     />
                     <label>Fullname</label>

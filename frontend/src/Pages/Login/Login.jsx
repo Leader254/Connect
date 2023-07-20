@@ -4,14 +4,15 @@ import { Link, useNavigate } from 'react-router-dom'
 import * as yup from 'yup'
 import axios from 'axios'
 import { AuthContext } from '../../Context/authContext';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import '../../CSS/Login.css'
+import Loading from '../Loading/Loading'
+import { toast } from 'react-toastify'
 
 const Login = () => {
+    const [loading, setLoading] = useState(false)
 
     const { dispatch } = useContext(AuthContext);
-    // console.log(user)
-
     const navigate = useNavigate()
 
     const schema = yup.object().shape({
@@ -19,26 +20,38 @@ const Login = () => {
         password: yup.string().required('Password is required')
     })
 
-    const { register, handleSubmit, formState: { errors }, reset } = useForm({
+    // const { register, handleSubmit, formState: { errors }, reset } = useForm({
+    //     resolver: yupResolver(schema)
+    // })
+    const { register, handleSubmit, formState: reset } = useForm({
         resolver: yupResolver(schema)
     })
 
     const onSubmitHandler = async (data) => {
+        setLoading(true)
         try {
             let result = await axios.post('http://localhost:3000/api/auth/login', data, {
                 withCredentials: true,
             });
-            console.log(result.data);
             dispatch({ type: 'login success', payload: result.data })
-            alert('Login Success')
+            toast.success("Congratulations! Lets Talk!!!", {
+                position: toast.POSITION.TOP_CENTER,
+                autoclose: 1000
+            });
+            setLoading(false)
             navigate('/')
         } catch (error) {
             if (error.response.data === 'Invalid Credentials') {
-                alert('Invalid Credentials')
+                toast.error("An error occured while logging you!!", {
+                    position: toast.POSITION.TOP_CENTER,
+                    autoclose: 1000
+                });
+                setLoading(false);
                 console.log(error.response.data)
             }
             else {
                 alert('Something went wrong')
+                setLoading(false)
                 console.log(error)
             }
         }
@@ -47,6 +60,7 @@ const Login = () => {
 
     return (
         <div className='login'>
+            {loading && <Loading />}
             <div className="login-card">
                 <div className="login-left">
                     <h1>Ready to connect</h1>
@@ -65,9 +79,9 @@ const Login = () => {
                     <h1>Login</h1>
                     <form onSubmit={handleSubmit(onSubmitHandler)}>
                         <input type="text" placeholder='Username' name='username' {...register('username')} />
-                        <p>{errors.username?.message}</p>
+                        {/* <p>{errors.username?.message}</p> */}
                         <input type="password" placeholder='Password' name='password' {...register('password')} />
-                        <p>{errors.password?.message}</p>
+                        {/* <p>{errors.password?.message}</p> */}
                         <button type='submit' className='loginbtn'>Login</button>
                     </form>
                 </div>

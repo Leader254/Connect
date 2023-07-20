@@ -12,6 +12,7 @@ const {
   SQL_DATABASE,
   SQL_SERVER,
   JWT_SECRET,
+  MAIL_PASSWORD,
 } = process.env;
 
 const sqlEncrypt = process.env.SQL_ENCRYPT === "true";
@@ -34,6 +35,7 @@ const config = {
     },
   },
   jwt_secret: JWT_SECRET,
+  mail_password: MAIL_PASSWORD,
 };
 
 export default config;

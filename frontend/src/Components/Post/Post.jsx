@@ -10,18 +10,21 @@ import Comments from '../Comments/Comments'
 import { useState } from 'react'
 import { MdDelete } from 'react-icons/md'
 import { BiSolidPencil } from 'react-icons/bi'
-import moment from "moment"
+// import moment from "moment"
+import relativeTime from 'dayjs/plugin/relativeTime'
+import * as dayjs from 'dayjs'
 import axios from 'axios'
 import { useContext } from 'react'
 import { AuthContext } from '../../Context/authContext'
 import { apiDomain } from '../../utils/utils'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'react-toastify'
 
 const Post = ({ post }) => {
 
     const { user } = useContext(AuthContext)
-
-
+    dayjs.extend(relativeTime)
+    const postTime = dayjs(post.createdAt).fromNow()
     const [commentView, setCommentView] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
     const navigate = useNavigate();
@@ -30,14 +33,16 @@ const Post = ({ post }) => {
         baseURL: apiDomain,
         withCredentials: true,
     });
-
-    const { isLoading, error, data } = useQuery(["likes", post.id], () =>
+    const { data } = useQuery(["likes", post.id], () =>
         makeRequest
             .get('/api/likes?postId=' + post.id)
             .then((res) => res.data)
     )
-    // console.log(data)
-
+    const { data: commentsData } = useQuery(["comments", post.id], () =>
+        makeRequest
+            .get('/api/comments?postId=' + post.id)
+            .then((res) => res.data)
+    );
     const queryClient = useQueryClient();
     const mutation = useMutation(
         (liked) => {
@@ -64,32 +69,33 @@ const Post = ({ post }) => {
     const handleMore = (e) => {
         e.preventDefault()
         setShowDropdown(!showDropdown)
-        // console.log("More button Clicked")
     }
-
 
     const handleDelete = async () => {
         try {
-            const confirm = window.confirm("Are you sure you want to delete this post?");
-            if (confirm) {
-                console.log("Deleting Post")
-                const response = await axios.delete(`${apiDomain}/api/posts/${post.id}`)
-                if (response.status === 200) {
-                    console.log("Post Deleted")
-                    window.location.reload()
-                }
-                else {
-                    console.log("Error Deleting Post")
-                }
+            if (post.userId !== user.id) {
+                alert("You can't delete a post that is not yours.");
+                return;
             }
 
+            const confirm = window.confirm("Are you sure you want to delete this post?");
+            if (confirm) {
+                const response = await axios.delete(`${apiDomain}/api/posts/${post.id}`);
+                if (response.status === 200) {
+                    toast.success("Post Deleted Successfully", {
+                        position: toast.POSITION.TOP_CENTER,
+                        autoclose: 1000,
+                    });
+                    window.location.reload();
+                } else {
+                    console.log("Error Deleting Post");
+                }
+            }
         } catch (error) {
-            console.log(error)
-            alert("Error Deleting Post")
+            console.log(error);
+            alert("Error Deleting Post");
         }
-
-
-    }
+    };
 
     const handleEdit = () => {
         navigate(`/update/${post.id}`)
@@ -106,7 +112,7 @@ const Post = ({ post }) => {
                             <Link to={`/profile/${post.userId}`} style={{ textDecoration: "none", color: "inherit" }}>
                                 <span className="name">{post.fullname}</span>
                             </Link>
-                            <span className="date">{moment(post.createdAt).fromNow()}</span>
+                            <span className="date">{postTime}</span>
                         </div>
                     </div>
                     <FiMoreHorizontal style={{ cursor: "pointer" }} onClick={handleMore} />
@@ -118,7 +124,7 @@ const Post = ({ post }) => {
                                     Edit Post
                                 </li>
                                 <li onClick={handleDelete} >
-                                    <MdDelete />
+                                    <MdDelete style={{ color: "red" }} />
                                     Delete Post
                                 </li>
                             </ul>
@@ -129,14 +135,15 @@ const Post = ({ post }) => {
                     <p>{post.description}</p>
                     <img src={post.image} alt="" />
                 </div>
+                <hr />
                 <div className="interactions">
                     <div className="item">
-                        {isLoading ? "loading" : data && data.includes(user.id) ? <AiFillLike className='icon' onClick={handleLike} /> : <BiLike className='icon' onClick={handleLike} />}
+                        {data && data.includes(user.id) ? <AiFillLike className='icon' onClick={handleLike} /> : <BiLike className='icon' onClick={handleLike} />}
                         {data && data.length} Likes
                     </div>
                     <div className="item" onClick={() => setCommentView(!commentView)}>
                         <FaRegComments className='icon' />
-                        {data && data.length} Comments
+                        {commentsData && commentsData.length} Comments
                     </div>
                     <div className="item">
                         <FiShare2 />

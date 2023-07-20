@@ -1,6 +1,6 @@
 import '../../CSS/Share.css'
 import { BiImage } from 'react-icons/bi'
-import { FaUserFriends } from 'react-icons/fa'
+// import { FaUserFriends } from 'react-icons/fa'
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Context/authContext";
 import { storage } from '../../firebase';
@@ -8,6 +8,7 @@ import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage'
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { apiDomain } from '../../utils/utils';
+import { toast } from 'react-toastify'
 
 
 const Share = () => {
@@ -55,6 +56,10 @@ const Share = () => {
 
         setFile(null);
         setDescription("");
+        toast.success("Post created successfully", {
+            position: toast.POSITION.TOP_CENTER,
+            autoclose: 1000
+        });
     };
 
 
@@ -102,10 +107,6 @@ const Share = () => {
                                 <span>Add Image</span>
                             </div>
                         </label>
-                        <div className="item">
-                            <FaUserFriends className="icon" />
-                            <span>Tag Friends</span>
-                        </div>
                     </div>
                     <div className="right">
                         <button onClick={uploadImage}>Share</button>

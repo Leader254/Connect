@@ -6,28 +6,29 @@ import { useQuery } from '@tanstack/react-query'
 
 const Posts = ({ userId }) => {
 
-    // const makeRequest = axios.create({
-    //     baseURL: apiDomain,
-    //     withCredentials: true,
-    // });
-
     const { isLoading, error, data } = useQuery(["posts"], () =>
         makeRequest
             .get('/posts?userId=' + userId)
             .then((res) => res.data)
     )
+    console.log(data)
 
     return (
         <div className='posts'>
-            {error
-                ? "Error Fetching posts"
-                : isLoading
-                    ? "Loading"
-                    : data.map((post) => (
-                        <Post post={post} key={post.id} />
-                    ))}
+            {error ? (
+                'Error Fetching posts'
+            ) : isLoading ? (
+                'Loading'
+            ) : data.length === 0 ? (
+                <p>You have no posts yet</p>
+            ) : (
+                data.map((post, index) => (
+                    <Post post={post} key={`${post.id}-${index}`} />
+                ))
+            )}
         </div>
-    )
+    );
+
 }
 
 export default Posts

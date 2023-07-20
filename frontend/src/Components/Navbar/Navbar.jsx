@@ -1,10 +1,10 @@
 import './Navbar.css'
-import { BiSolidMessageRoundedDetail } from 'react-icons/bi'
 import { FaBell } from 'react-icons/fa'
 import { BiSearchAlt } from 'react-icons/bi'
 import { Link, useNavigate } from 'react-router-dom'
 import { useContext, useState } from 'react'
 import { AuthContext } from '../../Context/authContext'
+import { BiSolidMessageDetail } from 'react-icons/bi'
 
 
 const Navbar = () => {
@@ -16,8 +16,10 @@ const Navbar = () => {
     const { user, dispatch } = useContext(AuthContext);
 
     const handleProfile = () => {
-        console.log("Profile Clicked")
-        setShowDropdown(!showDropdown)
+        setShowDropdown(!showDropdown);
+    }
+    const handleClick = () => {
+        navigate(`/profile/${user.id}`);
     }
 
     const logout = () => {
@@ -40,7 +42,7 @@ const Navbar = () => {
                 </div>
                 <div className="right">
                     <Link to='/messenger'>
-                        <BiSolidMessageRoundedDetail style={{ fontSize: '30px' }} />
+                        <BiSolidMessageDetail style={{ fontSize: '30px' }} />
                     </Link>
                     <FaBell style={{ fontSize: "30px" }} />
                     <div className="user">
@@ -48,9 +50,8 @@ const Navbar = () => {
                         {
                             showDropdown && (
                                 <div className="dropdown">
-                                    {/* <Link to={`/profile/${user.id}`} style={{ textDecoration: "none", color: "inherit" }}>  <span className="dropdownItem">Profile</span></Link> */}
                                     <ul className="links-to">
-                                        <li>
+                                        <li onClick={handleClick}>
                                             Profile
                                         </li>
                                         <li onClick={logout}>
@@ -68,4 +69,4 @@ const Navbar = () => {
     )
 }
 
-export default Navbar
+export default Navbar;

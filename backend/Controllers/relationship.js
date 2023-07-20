@@ -1,9 +1,10 @@
 import sql from "mssql";
 import config from "../db/config.js";
-import jwt from "jsonwebtoken";
+// import jwt from "jsonwebtoken";
 
 export const getRelationships = async (req, res) => {
   const followedUserId = req.query.followedUserId;
+  console.log(followedUserId);
   let pool;
   try {
     pool = await sql.connect(config.sql);
@@ -28,58 +29,50 @@ export const getRelationships = async (req, res) => {
   }
 };
 
-export const addRelationship = (req, res) => {
-  const token = req.cookies.accessToken;
-  if (!token) return res.status(401).json({ error: "Not logged in!" });
+export const addRelationship = async (req, res) => {
+  const userInfo = req.userInfo;
+  const followerUserId = userInfo.id;
+  const followedUserId = req.body.userId;
 
-  jwt.verify(token, "userSecret", async (err, userInfo) => {
-    if (err) return res.status(403).json({ error: "Token is not valid!" });
+  let pool;
+  try {
+    pool = await sql.connect(config.sql);
+    await pool
+      .request()
+      .input("followerUserId", sql.Int, followerUserId)
+      .input("followedUserId", sql.Int, followedUserId)
+      .query(
+        "INSERT INTO Relationships (followerUserId, followedUserId) VALUES (@followerUserId, @followedUserId)"
+      );
 
-    const followerUserId = userInfo.id;
-    const followedUserId = req.body.userId;
-
-    try {
-      const pool = await sql.connect(config.sql);
-      await pool
-        .request()
-        .input("followerUserId", sql.Int, followerUserId)
-        .input("followedUserId", sql.Int, followedUserId)
-        .query(
-          "INSERT INTO Relationships (followerUserId, followedUserId) VALUES (@followerUserId, @followedUserId)"
-        );
-
-      res.status(200).json({ message: "Relationship added successfully" });
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({ error: error.message });
+    res.status(200).json({ message: "Relationship added successfully" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: error.message });
+  } finally {
+    if (pool) {
+      await pool.close();
     }
-  });
+  }
 };
 
-export const deleteRelationship = (req, res) => {
-  const token = req.cookies.accessToken;
-  if (!token) return res.status(401).json({ error: "Not logged in!" });
+export const deleteRelationship = async (req, res) => {
+  const userInfo = req.userInfo;
+  const followerUserId = userInfo.id;
+  const followedUserId = req.query.userId;
+  try {
+    const pool = await sql.connect(config.sql);
+    const result = await pool
+      .request()
+      .input("followerUserId", sql.Int, followerUserId)
+      .input("followedUserId", sql.Int, followedUserId)
+      .query(
+        "DELETE FROM Relationships WHERE followerUserId = @followerUserId AND followedUserId = @followedUserId"
+      );
 
-  jwt.verify(token, "userSecret", async (err, userInfo) => {
-    if (err) return res.status(403).json({ error: "Token is not valid!" });
-
-    const followerUserId = userInfo.id;
-    const followedUserId = req.query.userId;
-
-    try {
-      const pool = await sql.connect(config.sql);
-      const result = await pool
-        .request()
-        .input("followerUserId", sql.Int, followerUserId)
-        .input("followedUserId", sql.Int, followedUserId)
-        .query(
-          "DELETE FROM Relationships WHERE followerUserId = @followerUserId AND followedUserId = @followedUserId"
-        );
-
-      res.status(200).json({ message: "Unfollowed successfully" });
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({ error: error.message });
-    }
-  });
+    res.status(200).json({ message: "Unfollowed successfully" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: error.message });
+  }
 };

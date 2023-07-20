@@ -5,11 +5,12 @@ import {
   addRelationship,
   deleteRelationship,
 } from "../Controllers/relationship.js";
+import { loginRequired } from "../Controllers/authentication.js";
 
 const router = express.Router();
 
-router.post("/", addRelationship);
+router.post("/", loginRequired, addRelationship);
 router.get("/", getRelationships);
-router.delete("/", deleteRelationship);
+router.delete("/", loginRequired, deleteRelationship);
 
 export default router;

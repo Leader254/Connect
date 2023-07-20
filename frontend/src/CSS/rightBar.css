@@ -1,7 +1,7 @@
 .rightbar {
     flex: 3;
     position: sticky;
-    top: 70px;
+    top: 45px;
     height: calc(100vh - 70px);
     overflow: scroll;
 
@@ -15,10 +15,9 @@
 }
 
 .container3 .item {
-    -webkit-box-shadow: 1px 1px 3px 2px rgba(0, 0, 0, 1);
-    -moz-box-shadow: 1px 1px 3px 2px rgba(0, 0, 0, 1);
-    box-shadow: 1px 1px 3px 2px rgba(0, 0, 0, 1);
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 2px 0px, rgba(0, 0, 0, 0.15) 0px 1px 3px 1px;
     border-radius: 5px;
+    background-color: white;
     padding: 20px;
     margin-bottom: 20px;
 }
@@ -27,7 +26,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 20px 0;
+    margin: 10px 0;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.user:hover {
+    background-color: #f5f5f5;
 }
 
 .user .userInfo {
@@ -61,15 +66,11 @@
 .action-btns {
     display: flex;
     align-items: center;
-    gap: 10px;
+    /* gap: 10px; */
 }
 
 .follow {
     background-color: #1877f2;
-}
-
-.dismiss {
-    background-color: #e0245e;
 }
 
 .follow,

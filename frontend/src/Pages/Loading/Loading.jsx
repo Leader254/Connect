@@ -1,11 +1,11 @@
-import { SpinningCircles } from 'react-loading-icons';
+import { TailSpin } from 'react-loading-icons';
 
 import './Loading.css'
 
 const Loading = () => {
     return (
         <div className='Loading-container'>
-            <SpinningCircles className='loading' stroke='#fff' fill='#fff' />
+            <TailSpin className='loading' stroke='#fff' fill='#fff' />
         </div>
     )
 }

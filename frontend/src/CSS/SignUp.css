@@ -26,7 +26,7 @@
     color: white;
 }
 
-.signup-left > h1 {
+.signup-left>h1 {
     font-size: 4.5rem;
     line-height: 50px;
 }
@@ -43,17 +43,18 @@
 
 
 .signup-right form {
-    margin-bottom: auto;
+    width: 300px;
+    /* margin-bottom: auto; */
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
 }
 
 .signup-right input {
     border: none;
     border-bottom: 1px solid lightgray;
     padding: 10px;
-    width: fit-content;
+    /* width: fit-content; */
     outline: none;
     border-radius: 5px;
 }

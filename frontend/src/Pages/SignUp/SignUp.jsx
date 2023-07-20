@@ -4,9 +4,12 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useNavigate, Link } from 'react-router-dom'
 import axios from 'axios'
-
 import { toast } from 'react-toastify'
+import { useState } from 'react'
+import Loading from '../Loading/Loading'
+
 const SignUp = () => {
+    const [loading, setLoading] = useState(false)
 
     const navigate = useNavigate();
 
@@ -28,18 +31,22 @@ const SignUp = () => {
             .oneOf([yup.ref('password'), null], 'Passwords must match')
 
     })
-    const { register, handleSubmit, formState: { errors }, reset } = useForm({
+    // const { register, handleSubmit, formState: { errors }, reset } = useForm({
+    //     resolver: yupResolver(schema)
+    // })
+    const { register, handleSubmit, formState: reset } = useForm({
         resolver: yupResolver(schema)
     })
 
     const onSubmitHandler = async (data) => {
+        setLoading(true)
         try {
-            let result = await axios.post('http://localhost:3000/api/auth/register', data)
-            console.log(result.data);
+            await axios.post('http://localhost:3000/api/auth/register', data)
             toast.success("Congratulation! Please Login to your account to proceed", {
                 position: toast.POSITION.TOP_CENTER,
                 autoclose: 1000
             });
+            setLoading(false)
             navigate('/login')
         } catch (error) {
             if (error.response.data === 'User already exists') {
@@ -47,7 +54,8 @@ const SignUp = () => {
                     position: toast.POSITION.TOP_CENTER,
                     autoclose: 1000
                 });
-                console.log(error.response.data)
+                setLoading(false);
+                // console.log(error.response.data)
             }
             else {
                 alert('Something went wrong')
@@ -59,6 +67,9 @@ const SignUp = () => {
 
     return (
         <div className='signup'>
+            {
+                loading && <Loading />
+            }
             <div className="signup-card">
                 <div className="signup-left">
                     <h1>Ready to connect</h1>
@@ -83,7 +94,7 @@ const SignUp = () => {
                             id="username"
                             {...register('username')}
                         />
-                        <p>{errors.username?.message}</p>
+                        {/* <p>{errors.username?.message}</p> */}
                         <input
                             type="email"
                             placeholder='Email'
@@ -91,7 +102,7 @@ const SignUp = () => {
                             id='email'
                             {...register('email')}
                         />
-                        <p>{errors.email?.message}</p>
+                        {/* <p>{errors.email?.message}</p> */}
                         <input
                             type="text"
                             placeholder='FullName'
@@ -99,7 +110,7 @@ const SignUp = () => {
                             id="fullname"
                             {...register('fullname')}
                         />
-                        <p>{errors.fullname?.message}</p>
+                        {/* <p>{errors.fullname?.message}</p> */}
                         <input
                             type="password"
                             placeholder='Password'
@@ -107,7 +118,7 @@ const SignUp = () => {
                             id="password"
                             {...register('password')}
                         />
-                        <p>{errors.password?.message}</p>
+                        {/* <p>{errors.password?.message}</p> */}
                         <input
                             type="password"
                             placeholder='Confirm Password'
@@ -115,7 +126,7 @@ const SignUp = () => {
                             id="cpassword"
                             {...register('cpassword')}
                         />
-                        <p>{errors.cpassword?.message}</p>
+                        {/* <p>{errors.cpassword?.message}</p> */}
                         <button className='registerbtn'>Register</button>
                     </form>
                 </div>

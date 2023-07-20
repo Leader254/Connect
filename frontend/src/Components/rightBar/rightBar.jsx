@@ -1,113 +1,70 @@
-import { useEffect, useState } from 'react'
-import '../../CSS/rightBar.css'
-import axios from 'axios'
-import { apiDomain } from '../../utils/utils'
+import { useEffect, useState } from 'react';
+import { makeRequest } from '../../utils/utils';
+import '../../CSS/rightBar.css';
+import { Link } from 'react-router-dom';
+// import { AuthContext } from '../../Context/authContext';
 
 const RightBar = () => {
-
-  const [suggestedFriends, setSuggestedFriends] = useState([])
+  // const { user } = useContext(AuthContext);
+  const [suggestedFriends, setSuggestedFriends] = useState([]);
 
   useEffect(() => {
     const fetchSuggestedFriends = async () => {
-      const res = await axios.get(`${apiDomain}/api/users/suggested`)
-        .then(res => res.data)
-      setSuggestedFriends(res)
-      // setSuggestedFriends(res.data)
-      console.log(res.data)
-    }
-    fetchSuggestedFriends()
-  }, [])
+      const res = await makeRequest.get('/users/suggested')
+        .then((res) => res.data);
+      setSuggestedFriends(res);
+    };
+
+    fetchSuggestedFriends();
+  }, []); // Empty dependency array to fetch suggested friends only once
+
+  const refetchSuggestedFriends = async () => {
+    const res = await makeRequest
+      .get('/users/suggested')
+      .then((res) => res.data);
+    setSuggestedFriends(res);
+  };
+
+  const handleFollow = async (userId) => {
+    await makeRequest
+      .post('/relationships', { userId })
+      .then(() => {
+        refetchSuggestedFriends();
+
+      })
+      .catch((error) => {
+        console.log('Error following user:', error);
+      });
+  };
+
+  const handleUserInfoClick = () => {
+    window.location.reload(); // Reload the page when userInfo is clicked
+  };
 
   return (
-    <div className='rightbar'>
+    <div className="rightbar">
       <div className="container3">
         <div className="item">
-          <span style={{ color: "lightgray" }}>Suggested for you</span>
-          {/* <div className="user">
-            <div className="userInfo">
-              <img src="https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="" />
-              <span>Samuel Wachira</span>
-            </div>
-            <div className="action-btns">
-              <button className='follow'>Follow</button>
-              <button className='dismiss'>Dismiss</button>
-            </div>
-          </div>
-          <div className="user">
-            <div className="userInfo">
-              <img src="https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="" />
-              <span>Janet Wamuyu</span>
-            </div>
-            <div className="action-btns">
-              <button className='follow'>Follow</button>
-              <button className='dismiss'>Dismiss</button>
-            </div>
-          </div> */}
-          {suggestedFriends.map(user => (
+          <span style={{ color: 'black' }}>Suggested for you</span>
+          {suggestedFriends.map((user) => (
             <div className="user" key={user.id}>
-              <div className="userInfo">
-                <img src={user.profilePic} alt={user.name} />
-                <span>{user.fullname}</span>
+              <div className="userInfo" onClick={handleUserInfoClick}>
+                <Link to={`/profile/${user.id}`} style={{ textDecoration: "none", color: "inherit" }}>
+                  <img src={user.profilePic} alt={user.username} />
+                  <span>{user.fullname}</span>
+                </Link>
               </div>
               <div className="action-btns">
-                <button className='follow'>Follow</button>
-                <button className='dismiss'>Dismiss</button>
+                <button className="follow" onClick={() => handleFollow(user.id)}>
+                  Follow
+                </button>
               </div>
             </div>
           ))}
         </div>
-        <div className="item">
-          <span style={{ color: "lightgray" }}>Latest Activities</span>
-          <div className="user">
-            <div className="userInfo">
-              <img src="https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="" />
-              <p>
-                <span>Samuel Wachira</span> commented on your post
-              </p>
-            </div>
-            <span>1 min ago</span>
-          </div>
-          <div className="user">
-            <div className="userInfo">
-              <img src="https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="" />
-              <p>
-                <span>Samuel Wachira</span> commented on your post
-              </p>
-            </div>
-            <span>1 min ago</span>
-          </div>
-          <div className="user">
-            <div className="userInfo">
-              <img src="https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="" />
-              <p>
-                <span>Samuel Wachira</span> commented on your post
-              </p>
-            </div>
-            <span>1 min ago</span>
-          </div>
-          <div className="user">
-            <div className="userInfo">
-              <img src="https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="" />
-              <p>
-                <span>Samuel Wachira</span> commented on your post
-              </p>
-            </div>
-            <span>1 min ago</span>
-          </div>
-        </div>
-        <div className="item">
-          <span style={{ color: "lightgray" }}>Online Friends</span>
-          <div className="user">
-            <div className="userInfo">
-              <img src="https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="" />
-              <div className="online" />
-              <span>Samuel Wachira</span>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default RightBar
+export default RightBar;

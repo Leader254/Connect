@@ -20,19 +20,20 @@
     z-index: 999;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    border-radius: 10px;
+    /* gap: 20px; */
     box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.09);
     position: relative;
 }
 
 .update .wrapper h1 {
-    color: lightgrey;
+    color: rgb(0, 0, 0);
 }
 
 .update .wrapper form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 7px;
 }
 
 .update .wrapper form .files {
@@ -45,7 +46,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    color: gray;
+    color: rgb(0, 0, 0);
     font-size: 14px;
 }
 
@@ -72,14 +73,15 @@
 }
 
 .update .wrapper form input {
+    border-radius: 3px;
+    outline: none;
     padding: 5px;
-    border: none;
     border-bottom: 1px solid lightgray;
     color: gray;
-    background-color: transparent;
 }
 
 .update .wrapper form button {
+    border-radius: 5px;
     border: none;
     padding: 10px;
     cursor: pointer;
@@ -88,8 +90,9 @@
 }
 
 .update .wrapper .close {
+    border-radius: 5px;
     position: absolute;
-    top: 10px;
+    top: 35px;
     right: 20px;
     border: none;
     background-color: #f0544f;
