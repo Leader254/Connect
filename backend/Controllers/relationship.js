@@ -4,7 +4,7 @@ import config from "../db/config.js";
 
 export const getRelationships = async (req, res) => {
   const followedUserId = req.query.followedUserId;
-  console.log(followedUserId);
+  // console.log(followedUserId);
   let pool;
   try {
     pool = await sql.connect(config.sql);
@@ -29,10 +29,35 @@ export const getRelationships = async (req, res) => {
   }
 };
 
+// export const addRelationship = async (req, res) => {
+//   const userInfo = req.userInfo;
+//   const followerUserId = userInfo.id;
+//   const followedUserId = req.body.userId;
+
+//   let pool;
+//   try {
+//     pool = await sql.connect(config.sql);
+//     await pool
+//       .request()
+//       .input("followerUserId", sql.Int, followerUserId)
+//       .input("followedUserId", sql.Int, followedUserId)
+//       .query(
+//         "INSERT INTO Relationships (followerUserId, followedUserId) VALUES (@followerUserId, @followedUserId)"
+//       );
+
+//     res.status(200).json({ message: "Relationship added successfully" });
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json({ error: error.message });
+//   } finally {
+//     if (pool) {
+//       await pool.close();
+//     }
+//   }
+// };
+
 export const addRelationship = async (req, res) => {
-  const userInfo = req.userInfo;
-  const followerUserId = userInfo.id;
-  const followedUserId = req.body.userId;
+  const { followerUserId, followedUserId } = req.body;
 
   let pool;
   try {
@@ -56,10 +81,30 @@ export const addRelationship = async (req, res) => {
   }
 };
 
+// export const deleteRelationship = async (req, res) => {
+//   const userInfo = req.userInfo;
+//   const followerUserId = userInfo.id;
+//   const followedUserId = req.query.userId;
+//   try {
+//     const pool = await sql.connect(config.sql);
+//     const result = await pool
+//       .request()
+//       .input("followerUserId", sql.Int, followerUserId)
+//       .input("followedUserId", sql.Int, followedUserId)
+//       .query(
+//         "DELETE FROM Relationships WHERE followerUserId = @followerUserId AND followedUserId = @followedUserId"
+//       );
+
+//     res.status(200).json({ message: "Unfollowed successfully" });
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json({ error: error.message });
+//   }
+// };
+
+// Testing the routes without the userInfo
 export const deleteRelationship = async (req, res) => {
-  const userInfo = req.userInfo;
-  const followerUserId = userInfo.id;
-  const followedUserId = req.query.userId;
+  const { followerUserId, followedUserId } = req.body;
   try {
     const pool = await sql.connect(config.sql);
     const result = await pool
