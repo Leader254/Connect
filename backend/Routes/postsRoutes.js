@@ -11,9 +11,9 @@ import { loginRequired } from "../Controllers/authentication.js";
 const router = express.Router();
 
 router.get("/:id", getSinglePost);
-router.get("/", getPosts);
+router.get("/", loginRequired, getPosts);
 router.post("/", addPosts);
 router.delete("/:id", deletePost);
-router.put("/:id", updatePost);
+router.put("/:id", loginRequired, updatePost);
 
 export default router;

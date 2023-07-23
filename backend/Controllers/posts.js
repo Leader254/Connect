@@ -2,48 +2,48 @@ import sql from "mssql";
 import config from "../db/config.js";
 import jwt from "jsonwebtoken";
 
-// export const getPosts = async (req, res) => {
-//   const userId = req.query.userId;
-//   const userInfo = req.userInfo;
-
-//   try {
-//     const pool = await sql.connect(config.sql);
-//     const request = pool.request();
-
-//     let result;
-//     if (userId !== "undefined") {
-//       result = await request
-//         .input("userId", sql.Int, userId)
-//         .query(
-//           `SELECT p.*, fullname, profilePic FROM Posts AS p JOIN Users AS u ON (u.id = p.userId) WHERE p.userId = @userId ORDER BY p.createdAt DESC`
-//         );
-//     } else {
-//       result = await request
-//         .input("followerUserId", sql.Int, userInfo.id)
-//         .query(
-//           `SELECT p.*, fullname, profilePic FROM Posts AS p JOIN Users AS u ON (u.id = p.userId) LEFT JOIN Relationships AS r ON (p.userId = r.followedUserId) WHERE r.followerUserId = @followerUserId OR p.userId = @followerUserId ORDER BY p.createdAt DESC`
-//         );
-//     }
-
-//     return res.status(200).json(result.recordset);
-//   } catch (error) {
-//     console.log(error);
-//     return res.status(500).json(error);
-//   }
-// };
-
 export const getPosts = async (req, res) => {
+  const userId = req.query.userId;
+  const userInfo = req.userInfo;
+
   try {
-    let pool = await sql.connect(config.sql);
-    let result = await pool.request().query("SELECT * FROM Posts");
+    const pool = await sql.connect(config.sql);
+    const request = pool.request();
+
+    let result;
+    if (userId !== "undefined") {
+      result = await request
+        .input("userId", sql.Int, userId)
+        .query(
+          `SELECT p.*, fullname, profilePic FROM Posts AS p JOIN Users AS u ON (u.id = p.userId) WHERE p.userId = @userId ORDER BY p.createdAt DESC`
+        );
+    } else {
+      result = await request
+        .input("followerUserId", sql.Int, userInfo.id)
+        .query(
+          `SELECT p.*, fullname, profilePic FROM Posts AS p JOIN Users AS u ON (u.id = p.userId) LEFT JOIN Relationships AS r ON (p.userId = r.followedUserId) WHERE r.followerUserId = @followerUserId OR p.userId = @followerUserId ORDER BY p.createdAt DESC`
+        );
+    }
+
     return res.status(200).json(result.recordset);
   } catch (error) {
     console.log(error);
     return res.status(500).json(error);
-  } finally {
-    sql.close();
   }
 };
+
+// export const getPosts = async (req, res) => {
+//   try {
+//     let pool = await sql.connect(config.sql);
+//     let result = await pool.request().query("SELECT * FROM Posts");
+//     return res.status(200).json(result.recordset);
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json(error);
+//   } finally {
+//     sql.close();
+//   }
+// };
 
 export const getSinglePost = async (req, res) => {
   const { id } = req.params;

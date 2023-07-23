@@ -5,14 +5,14 @@ import {
   addRelationship,
   deleteRelationship,
 } from "../Controllers/relationship.js";
-// import { loginRequired } from "../Controllers/authentication.js";
+import { loginRequired } from "../Controllers/authentication.js";
 
 const router = express.Router();
 
-// router.post("/", loginRequired, addRelationship);
-router.post("/", addRelationship);
+router.post("/", loginRequired, addRelationship);
+// router.post("/", addRelationship);
 router.get("/", getRelationships);
-// router.delete("/", loginRequired, deleteRelationship);
-router.delete("/", deleteRelationship);
+router.delete("/", loginRequired, deleteRelationship);
+// router.delete("/", deleteRelationship);
 
 export default router;

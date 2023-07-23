@@ -3,7 +3,7 @@ import { useContext, useState } from 'react';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import { VscLocation } from 'react-icons/vsc';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../Context/authContext';
 import { makeRequest } from '../../utils/utils';
 import Update from '../../Components/Update/Update';
@@ -43,10 +43,6 @@ const Profile = () => {
     mutation.mutate(relationshipData && relationshipData.includes(user.id));
   };
 
-  const handleClick = () => {
-
-  }
-
   return (
     <div className='profile'>
       {isLoading ? (
@@ -74,7 +70,7 @@ const Profile = () => {
                 </div>
                 {relationshipLoading ? "Loading" : (
                   userId === user.id ? (
-                    <button onClick={() => setShowUpdate(true)}>Update</button>
+                    <button onClick={() => setShowUpdate(true)} style={{ cursor: "pointer" }}>Update</button>
                   ) : (
                     <button className='follow-profile' onClick={handleFollow}>
                       {relationshipData && relationshipData.includes(user.id) ? "Unfollow" : "Follow"}
@@ -83,7 +79,9 @@ const Profile = () => {
                 )}
               </div>
               <div className="right">
-                <BiSolidMessageDetail style={{ fontSize: "25px" }} onClick={handleClick} />
+                <Link to='/messenger'>
+                  <BiSolidMessageDetail style={{ fontSize: '30px', cursor: "pointer" }} />
+                </Link>
                 <FiMoreHorizontal style={{ fontSize: "25px" }} />
               </div>
             </div>

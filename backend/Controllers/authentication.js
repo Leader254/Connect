@@ -5,16 +5,16 @@ import config from "../db/config.js";
 
 // Login required middleware
 export const loginRequired = async (req, res, next) => {
-  // const token = req.cookies.accessToken;
-  // if (!token) {
-  //   return res.status(401).json("Not logged in!");
-  // } else {
-  //   jwt.verify(token, config.jwt_secret, async (err, userInfo) => {
-  //     if (err) return res.status(403).json("Token is not valid!");
-  //     req.userInfo = userInfo;
-  //     next();
-  //   });
-  // }
+  const token = req.cookies.accessToken;
+  if (!token) {
+    return res.status(401).json("Not logged in!");
+  } else {
+    jwt.verify(token, config.jwt_secret, async (err, userInfo) => {
+      if (err) return res.status(403).json("Token is not valid!");
+      req.userInfo = userInfo;
+      next();
+    });
+  }
 };
 
 // Register logic

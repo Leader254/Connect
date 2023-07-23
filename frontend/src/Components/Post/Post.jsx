@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import '../../CSS/Post.css'
 import { FiMoreHorizontal } from 'react-icons/fi'
 import { BiLike } from 'react-icons/bi'
@@ -19,6 +19,7 @@ import { AuthContext } from '../../Context/authContext'
 import { apiDomain } from '../../utils/utils'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
+import PostUpdate from '../postUpdate/postUpdate'
 
 const Post = ({ post }) => {
 
@@ -27,7 +28,8 @@ const Post = ({ post }) => {
     const postTime = dayjs(post.createdAt).fromNow()
     const [commentView, setCommentView] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
-    const navigate = useNavigate();
+    const [update, setUpdate] = useState(false);
+    // const navigate = useNavigate();
 
     const makeRequest = axios.create({
         baseURL: apiDomain,
@@ -36,8 +38,13 @@ const Post = ({ post }) => {
     const { data } = useQuery(["likes", post.id], () =>
         makeRequest
             .get('/api/likes?postId=' + post.id)
-            .then((res) => res.data)
-    )
+            .then((res) => {
+                if (res.data.error === 'No likes found for the post') {
+                    return [];
+                }
+                return res.data;
+            })
+    );
     const { data: commentsData } = useQuery(["comments", post.id], () =>
         makeRequest
             .get('/api/comments?postId=' + post.id)
@@ -73,10 +80,10 @@ const Post = ({ post }) => {
 
     const handleDelete = async () => {
         try {
-            if (post.userId !== user.id) {
-                alert("You can't delete a post that is not yours.");
-                return;
-            }
+            if (post.userId !== JSON.parse(localStorage.getItem('user')).id) return toast.error('You can only delete your own post', {
+                position: toast.POSITION.TOP_CENTER,
+                autoClose: 1000,
+            });
 
             const confirm = window.confirm("Are you sure you want to delete this post?");
             if (confirm) {
@@ -97,11 +104,6 @@ const Post = ({ post }) => {
         }
     };
 
-    const handleEdit = () => {
-        navigate(`/update/${post.id}`)
-        console.log("Edit Post")
-    }
-
     return (
         <div className='post'>
             <div className="postwrapper">
@@ -119,7 +121,7 @@ const Post = ({ post }) => {
                     {showDropdown && (
                         <div className="dropdown">
                             <ul>
-                                <li onClick={handleEdit}>
+                                <li onClick={() => setUpdate(true)}>
                                     <BiSolidPencil />
                                     Edit Post
                                 </li>
@@ -151,6 +153,7 @@ const Post = ({ post }) => {
                     </div>
                 </div>
                 {commentView && < Comments postId={post.id} />}
+                {update && <PostUpdate setOpenUpdate={setUpdate} post={post} />}
             </div>
         </div>
     )

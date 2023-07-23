@@ -17,6 +17,7 @@ const Update = ({ setOpenUpdate, user }) => {
         username: user.username || '',
         fullname: user.fullname || '',
         country: user.country || '',
+        bio: user.bio || '',
     });
 
     const handleChange = (e) => {
@@ -139,6 +140,13 @@ const Update = ({ setOpenUpdate, user }) => {
                         type="text"
                         name="country"
                         value={texts.country}
+                        onChange={handleChange}
+                    />
+                    <label>Bio</label>
+                    <input
+                        type="text"
+                        name="bio"
+                        value={texts.bio}
                         onChange={handleChange}
                     />
                     <button onClick={handleClick}>Update</button>

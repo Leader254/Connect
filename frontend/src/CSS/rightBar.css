@@ -35,11 +35,19 @@
     background-color: #f5f5f5;
 }
 
-.user .userInfo {
+.userInfo {
     display: flex;
     align-items: center;
     gap: 20px;
     position: relative;
+}
+
+.link-info {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .user .userInfo img {

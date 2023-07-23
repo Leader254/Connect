@@ -26,45 +26,11 @@ export const getUser = async (req, res) => {
 };
 
 // updateUser
-// export const updateUser = async (req, res) => {
-//   const { username, email, fullname, country, coverPic, profilePic, bio } =
-//     req.body;
-//   const userInfo = req.userInfo;
-
-//   try {
-//     const pool = await sql.connect(config.sql);
-//     const result = await pool
-//       .request()
-//       .input("username", sql.VarChar, username)
-//       .input("email", sql.VarChar, email)
-//       .input("fullname", sql.VarChar, fullname)
-//       .input("country", sql.VarChar, country)
-//       .input("coverPic", sql.VarChar, coverPic)
-//       .input("profilePic", sql.VarChar, profilePic)
-//       .input("bio", sql.VarChar, bio)
-//       .input("userId", sql.Int, userInfo.id)
-//       .query(
-//         "UPDATE Users SET username = @username, email = @email, fullname = @fullname, country = @country, coverPic = @coverPic, profilePic = @profilePic, bio = @bio WHERE id = @userId"
-//       );
-
-//     if (result.rowsAffected[0] === 0) {
-//       return res.status(403).json("You can update only your profile");
-//     }
-
-//     return res.json("Updated!");
-//   } catch (error) {
-//     console.log(error);
-//     return res
-//       .status(500)
-//       .json({ error: "Error occurred while updating user" });
-//   }
-// };
-
-// Testing updateUser
 export const updateUser = async (req, res) => {
   const { username, email, fullname, country, coverPic, profilePic, bio } =
     req.body;
-  const { userId } = req.query;
+  const userInfo = req.userInfo;
+
   try {
     const pool = await sql.connect(config.sql);
     const result = await pool
@@ -76,7 +42,7 @@ export const updateUser = async (req, res) => {
       .input("coverPic", sql.VarChar, coverPic)
       .input("profilePic", sql.VarChar, profilePic)
       .input("bio", sql.VarChar, bio)
-      .input("userId", sql.Int, userId)
+      .input("userId", sql.Int, userInfo.id)
       .query(
         "UPDATE Users SET username = @username, email = @email, fullname = @fullname, country = @country, coverPic = @coverPic, profilePic = @profilePic, bio = @bio WHERE id = @userId"
       );
@@ -93,6 +59,40 @@ export const updateUser = async (req, res) => {
       .json({ error: "Error occurred while updating user" });
   }
 };
+
+// ===== Testing updateUser ==== //
+// export const updateUser = async (req, res) => {
+//   const { username, email, fullname, country, coverPic, profilePic, bio } =
+//     req.body;
+//   const { userId } = req.query;
+//   try {
+//     const pool = await sql.connect(config.sql);
+//     const result = await pool
+//       .request()
+//       .input("username", sql.VarChar, username)
+//       .input("email", sql.VarChar, email)
+//       .input("fullname", sql.VarChar, fullname)
+//       .input("country", sql.VarChar, country)
+//       .input("coverPic", sql.VarChar, coverPic)
+//       .input("profilePic", sql.VarChar, profilePic)
+//       .input("bio", sql.VarChar, bio)
+//       .input("userId", sql.Int, userId)
+//       .query(
+//         "UPDATE Users SET username = @username, email = @email, fullname = @fullname, country = @country, coverPic = @coverPic, profilePic = @profilePic, bio = @bio WHERE id = @userId"
+//       );
+
+//     if (result.rowsAffected[0] === 0) {
+//       return res.status(403).json("You can update only your profile");
+//     }
+
+//     return res.json("Updated!");
+//   } catch (error) {
+//     console.log(error);
+//     return res
+//       .status(500)
+//       .json({ error: "Error occurred while updating user" });
+//   }
+// };
 
 export const suggestedUsers = async (req, res) => {
   const userInfo = req.userInfo;
@@ -128,40 +128,13 @@ export const suggestedUsers = async (req, res) => {
 };
 
 // friends controller
-// export const getFriends = async (req, res) => {
-//   const userInfo = req.userInfo;
-
-//   try {
-//     const pool = await sql.connect(config.sql);
-//     const result = await pool.request().input("userId", sql.Int, userInfo.id)
-//       .query(`
-//     SELECT *
-//     FROM Users u
-//     WHERE u.id <> @userId
-//       AND EXISTS (
-//         SELECT 1
-//         FROM Relationships r
-//         WHERE (r.followerUserId = @userId AND r.followedUserId = u.id)
-//       )
-//     ORDER BY NEWID()
-//   `);
-
-//     return res.status(200).json(result.recordset);
-//   } catch (error) {
-//     console.log(error);
-//     return res
-//       .status(500)
-//       .json({ error: "Error occurred while getting random friends" });
-//   }
-// };
-
-// Testing friends controller
 export const getFriends = async (req, res) => {
-  const userId = req.query.id;
+  const userInfo = req.userInfo;
 
   try {
     const pool = await sql.connect(config.sql);
-    const result = await pool.request().input("userId", sql.Int, userId).query(`
+    const result = await pool.request().input("userId", sql.Int, userInfo.id)
+      .query(`
     SELECT *
     FROM Users u
     WHERE u.id <> @userId
@@ -181,3 +154,30 @@ export const getFriends = async (req, res) => {
       .json({ error: "Error occurred while getting random friends" });
   }
 };
+
+// ===== Testing friends controller ==== //
+//  export const getFriends = async (req, res) => {
+//   const userId = req.query.id;
+
+//   try {
+//     const pool = await sql.connect(config.sql);
+//     const result = await pool.request().input("userId", sql.Int, userId).query(`
+//     SELECT *
+//     FROM Users u
+//     WHERE u.id <> @userId
+//       AND EXISTS (
+//         SELECT 1
+//         FROM Relationships r
+//         WHERE (r.followerUserId = @userId AND r.followedUserId = u.id)
+//       )
+//     ORDER BY NEWID()
+//   `);
+
+//     return res.status(200).json(result.recordset);
+//   } catch (error) {
+//     console.log(error);
+//     return res
+//       .status(500)
+//       .json({ error: "Error occurred while getting random friends" });
+//   }
+// };

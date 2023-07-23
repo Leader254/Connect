@@ -30,6 +30,7 @@ const RightBar = () => {
       .post('/relationships', { userId })
       .then(() => {
         refetchSuggestedFriends();
+        window.location.reload();
 
       })
       .catch((error) => {
@@ -45,11 +46,11 @@ const RightBar = () => {
     <div className="rightbar">
       <div className="container3">
         <div className="item">
-          <span style={{ color: 'black' }}>Suggested for you</span>
+          <span style={{ color: 'black', textDecoration: "underline" }}>Suggested for you</span>
           {suggestedFriends.map((user) => (
             <div className="user" key={user.id}>
               <div className="userInfo" onClick={handleUserInfoClick}>
-                <Link to={`/profile/${user.id}`} style={{ textDecoration: "none", color: "inherit" }}>
+                <Link to={`/profile/${user.id}`} className='link-info'>
                   <img src={user.profilePic} alt={user.username} />
                   <span>{user.fullname}</span>
                 </Link>

@@ -9,12 +9,14 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { apiDomain } from '../../utils/utils';
 import { toast } from 'react-toastify'
+import Loading from '../../Pages/Loading/Loading';
 
 
 const Share = () => {
     const [file, setFile] = useState(null);
     const [description, setDescription] = useState("");
     const [imageList, setImageList] = useState([])
+    const [loading, setLoading] = useState(false)
 
     const imageListRef = ref(storage, "images/")
     const { user } = useContext(AuthContext);
@@ -36,6 +38,7 @@ const Share = () => {
 
     const uploadImage = async (e) => {
         e.preventDefault();
+        setLoading(true)
         if (file == null) return;
 
         let imgUrl = "";
@@ -53,6 +56,7 @@ const Share = () => {
         };
 
         mutation.mutate(newPost);
+        setLoading(false)
 
         setFile(null);
         setDescription("");
@@ -75,6 +79,7 @@ const Share = () => {
 
     return (
         <div className="share">
+            {loading && <Loading />}
             <div className="container">
                 <div className="top">
                     <div className="left">
