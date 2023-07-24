@@ -13,5 +13,6 @@ router.post("/", loginRequired, createComment);
 // router.post("/", createComment);
 router.get("/", getAllComments);
 router.delete("/:id", loginRequired, deleteComment);
+// router.delete("/:id", deleteComment);
 
 export default router;

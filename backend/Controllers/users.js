@@ -156,7 +156,7 @@ export const getFriends = async (req, res) => {
 };
 
 // ===== Testing friends controller ==== //
-//  export const getFriends = async (req, res) => {
+// export const getFriends = async (req, res) => {
 //   const userId = req.query.id;
 
 //   try {

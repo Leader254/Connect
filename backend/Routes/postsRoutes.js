@@ -15,5 +15,7 @@ router.get("/", loginRequired, getPosts);
 router.post("/", addPosts);
 router.delete("/:id", deletePost);
 router.put("/:id", loginRequired, updatePost);
+// router.put("/:id", updatePost);
+// router.get("/", getPosts);
 
 export default router;

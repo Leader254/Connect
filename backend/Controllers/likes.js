@@ -41,6 +41,24 @@ export const addLike = async (req, res) => {
   }
 };
 
+// =====  TESTING LIKES ROUTES  ===== //
+// export const addLike = async (req, res) => {
+//   const { postId, userId } = req.body;
+//   // const userId = req.userInfo.id;
+//   try {
+//     const pool = await sql.connect(config.sql);
+//     await pool
+//       .request()
+//       .input("userId", sql.Int, userId)
+//       .input("postId", sql.Int, postId)
+//       .query("INSERT INTO Likes (userId, postId) VALUES (@userId, @postId)");
+//     res.status(200).json({ message: "Post has been liked successfully" });
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json({ error: error });
+//   }
+// };
+
 export const deleteLike = async (req, res) => {
   const { postId } = req.query;
   const userId = req.userInfo.id;

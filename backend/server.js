@@ -8,7 +8,8 @@ import commentRoute from "./Routes/commentsRoutes.js";
 import userRoute from "./Routes/usersRoutes.js";
 import likeRoute from "./Routes/likesRoutes.js";
 import relationshipRoute from "./Routes/rshipRoutes.js";
-// import chatRoute from "./Routes/chatsRoutes.js";
+import chatRoute from "./Routes/chatRoutes.js";
+
 import { Server } from "socket.io";
 import http from "http";
 import { chatMessage } from "./Controllers/chatController.js";
@@ -48,7 +49,7 @@ app.use("/api/comments", commentRoute);
 app.use("/api/users", userRoute);
 app.use("/api/likes", likeRoute);
 app.use("/api/relationships", relationshipRoute);
-// app.use("/api/chats", chatRoute);
+app.use("/api/chats", chatRoute);
 
 chatMessage(io);
 

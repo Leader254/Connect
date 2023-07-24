@@ -79,3 +79,20 @@ export const deleteComment = async (req, res) => {
     return res.status(500).json({ error: error });
   }
 };
+
+// export const deleteComment = async (req, res) => {
+//   const { id } = req.params;
+//   // const userId = req.userInfo.id;
+//   try {
+//     const pool = await sql.connect(config.sql);
+//     await pool
+//       .request()
+//       .input("id", sql.Int, id)
+//       // .input("userId", sql.Int, userId)
+//       .query("DELETE FROM Comments WHERE id = @id");
+//     res.status(200).json({ message: "Comment deleted successfully" });
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json({ error: error });
+//   }
+// };

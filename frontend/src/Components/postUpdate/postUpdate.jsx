@@ -74,11 +74,11 @@ const PostUpdate = ({ setOpenUpdate, post }) => {
         <div className="update">
             {loading && <Loading />}
             <div className="wrapper wrap">
-                <h1>Update Your Post</h1>
+                <h1>Update Post</h1>
                 <form>
                     <div className="files">
                         <label htmlFor="postImg">
-                            <span>Post Picture</span>
+                            <span>Post Image</span>
                             <div className="imgContainer">
                                 <img
                                     src={postImg ? URL.createObjectURL(postImg) : post.image ? post.image : ''}
@@ -93,7 +93,7 @@ const PostUpdate = ({ setOpenUpdate, post }) => {
                             onChange={(e) => setPostImg(e.target.files[0])}
                         />
                     </div>
-                    <label>Post Content</label>
+                    <label>Post Description</label>
                     <textarea
                         type="text"
                         name="description"

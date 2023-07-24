@@ -3,17 +3,22 @@ import { useContext, useState } from 'react';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import { VscLocation } from 'react-icons/vsc';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../Context/authContext';
 import { makeRequest } from '../../utils/utils';
 import Update from '../../Components/Update/Update';
 import Posts from '../../Components/Posts/Posts';
 import { BiSolidMessageDetail } from 'react-icons/bi';
+// import { useReducer } from 'react';
+import { useChatContext } from '../../Context/ChatContext';
+
 
 const Profile = () => {
   const [showUpdate, setShowUpdate] = useState(false);
   const { user } = useContext(AuthContext);
   const userId = parseInt(useLocation().pathname.split("/")[2]);
+  const navigate = useNavigate();
+  const { setNewChatInfo } = useChatContext();
 
   const { isLoading, data } = useQuery(["user"], () =>
     makeRequest.get('/users/find/' + userId).then((res) => res.data)
@@ -42,6 +47,14 @@ const Profile = () => {
   const handleFollow = () => {
     mutation.mutate(relationshipData && relationshipData.includes(user.id));
   };
+
+  const routeToRoom = () => {
+    makeRequest.post('/chats/createRoomId', { senderId: user.id, receiverId: userId }).then((res) => {
+      console.log(user.id, userId)
+      setNewChatInfo({ senderId: user.id, receiverId: userId, roomId: res.data.roomId })
+      navigate('/messenger', { replace: true });
+    })
+  }
 
   return (
     <div className='profile'>
@@ -79,9 +92,7 @@ const Profile = () => {
                 )}
               </div>
               <div className="right">
-                <Link to='/messenger'>
-                  <BiSolidMessageDetail style={{ fontSize: '30px', cursor: "pointer" }} />
-                </Link>
+                <BiSolidMessageDetail style={{ fontSize: '30px', cursor: "pointer" }} onClick={routeToRoom} />
                 <FiMoreHorizontal style={{ fontSize: "25px" }} />
               </div>
             </div>

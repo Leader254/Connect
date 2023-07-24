@@ -13,7 +13,7 @@ router.get("/find/:userId", getUser);
 router.put("/update", loginRequired, updateUser);
 // router.put("/update", updateUser);
 router.get("/suggested", loginRequired, suggestedUsers);
-router.get("/suggested", suggestedUsers);
+// router.get("/suggested", suggestedUsers);
 router.get("/friends", loginRequired, getFriends);
 // router.get("/friends", getFriends);
 
