@@ -8,7 +8,9 @@ import commentRoute from "./Routes/commentsRoutes.js";
 import userRoute from "./Routes/usersRoutes.js";
 import likeRoute from "./Routes/likesRoutes.js";
 import relationshipRoute from "./Routes/rshipRoutes.js";
-import chatRoute from "./Routes/chatRoutes.js";
+// import chatRoute from "./Routes/chatRoutes.js";
+import chatsRoute from "./Routes/chatRoute.js";
+import messageRoute from "./Routes/messageRoutes.js";
 
 import { Server } from "socket.io";
 import http from "http";
@@ -49,7 +51,9 @@ app.use("/api/comments", commentRoute);
 app.use("/api/users", userRoute);
 app.use("/api/likes", likeRoute);
 app.use("/api/relationships", relationshipRoute);
-app.use("/api/chats", chatRoute);
+// app.use("/api/chats", chatRoute);
+app.use("/api/chats", chatsRoute);
+app.use("/api/messages", messageRoute);
 
 chatMessage(io);
 
@@ -57,6 +61,6 @@ app.get("/", (req, res) => {
   res.send("Hello and welcome to the server");
 });
 
-app.listen(config.port, () => {
+server.listen(config.port, () => {
   console.log(`Server is running on port ${config.port}`);
 });

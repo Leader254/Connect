@@ -1,17 +1,54 @@
-import Navbar from '../../Components/Navbar/Navbar'
-import '../../Css/Messenger.css'
-import Conversation from '../../Components/Conversation/Conversation'
-import Message from '../Message/Message'
-import Online from '../Online/Online'
-import { BsSendFill } from 'react-icons/bs'
-// import io from 'socket.io-client'
-// import {v4 as uuid } from "uuid"
-import { useChatContext } from '../../Context/ChatContext'
+import { useContext, useEffect, useRef, useState } from "react";
+// import io from "socket.io-client";
+import { useChatContext } from "../../Context/ChatContext";
+import Navbar from "../../Components/Navbar/Navbar";
+import Conversation from "../../Components/Conversation/Conversation";
+import Message from "../Message/Message";
+import Online from "../Online/Online";
+import { BsSendFill } from "react-icons/bs";
+import "../../Css/Messenger.css";
+import { SocketContext } from "../../Context/SocketContext";
 
 const Messenger = () => {
-    const { chatInfo } = useChatContext()
-    console.log(chatInfo)
-    // const socket = io("http://localhost:3000", {query: {roomId: roomId}})
+    const [messages, setMessages] = useState("");
+    const { chatInfo } = useChatContext();
+    const socket = useContext(SocketContext);
+
+    const handleSend = () => {
+        if (messages.trim()) {
+            const message = {
+                senderId: chatInfo.senderId,
+                messages: messages,
+                roomId: chatInfo.roomId,
+                receiverId: chatInfo.receiverId,
+                createdAt: new Date().toISOString(),
+            };
+
+            socket.emit("joinRoom", chatInfo.roomId);
+            socket.emit("sendMessage", message);
+            setMessages("");
+        }
+    };
+
+    const handleInput = (e) => {
+        if (e.key === "Enter") {
+            handleSend();
+        }
+    };
+
+    const handleChange = (e) => {
+        setMessages(e.target.value);
+    };
+
+    useEffect(() => {
+        socket.on("getMessage", (data) => {
+            console.log(data);
+        });
+        return () => {
+            socket.off("getMessage");
+        };
+    }, [socket]);
+
     return (
         <>
             <Navbar />
@@ -25,12 +62,23 @@ const Messenger = () => {
                 <div className="chatBox">
                     <div className="chatBoxWrapper">
                         <div className="chatBoxTop">
+                            {/* Display messages here */}
+                            {/* For example, you can map over the messages array and render each message */}
+                            {/* messages.map((message, index) => (
+                                <Message key={index} message={message} />
+                            )) */}
                             <Message own={true} />
                             <Message />
                         </div>
                         <div className="chatBoxBottom">
-                            <input className="chatMessageInput" placeholder="write something..." />
-                            <button className="chatSubmitButton">
+                            <input
+                                className="chatMessageInput"
+                                placeholder="write something..."
+                                value={messages}
+                                onChange={handleChange}
+                                onKeyPress={handleInput}
+                            />
+                            <button className="chatSubmitButton" onClick={handleSend}>
                                 <BsSendFill />
                             </button>
                         </div>
@@ -43,7 +91,7 @@ const Messenger = () => {
                 </div>
             </div>
         </>
-    )
-}
+    );
+};
 
-export default Messenger
+export default Messenger;

@@ -41,7 +41,7 @@ const Navbar = () => {
 
                 </div>
                 <div className="right">
-                    <Link to='/messenger'>
+                    <Link to='/chat'>
                         <BiSolidMessageDetail style={{ fontSize: '30px' }} />
                     </Link>
                     <FaBell style={{ fontSize: "30px" }} />

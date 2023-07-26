@@ -4,10 +4,13 @@ import config from "../db/config.js";
 export const chatMessage = (io) => {
   io.on("connection", (socket) => {
     console.log("a user connected");
-    const roomId = socket.handshake.query.roomId;
-    socket.join(roomId);
+    // const roomId = socket.handshake.query.roomId;
+    // socket.join(roomId);
+    let roomId;
 
-    socket.on("joinRoom", async (roomId) => {
+    socket.on("getChats", async (roomId) => {
+      roomId = roomId;
+      socket.join(roomId);
       let pool;
       try {
         pool = await sql.connect(config);
@@ -22,21 +25,40 @@ export const chatMessage = (io) => {
         socket.emit("output-messages", result.recordset);
       } catch {
         console.log(err);
-      } finally {
-        await pool.close();
       }
     });
 
-    socket.on("chat", async (data) => {
+    // join room
+    socket.on("joinRoom", async (roomId) => {
+      socket.join(roomId);
+      console.log(roomId);
       let pool;
       try {
-        pool = await sql.connect(config);
+        pool = await sql.connect(config.sql);
+        const result = await pool
+          .request()
+          .input("roomId", sql.Int, roomId)
+          .input("senderId", sql.Int, senderId)
+          .input("receiverId", sql.Int, receiverId)
+          .query(
+            "SELECT * FROM Messages WHERE roomId = @roomId AND (senderId = @senderId OR receiverId = @receiverId) ORDER BY createdAt ASC"
+          );
+        socket.emit("output-messages", result.recordset);
+      } catch {
+        console.log(err);
+      }
+    });
+    socket.on("sendMessage", async (data) => {
+      let pool;
+      console.log(data);
+      try {
+        pool = await sql.connect(config.sql);
         const result = await pool
           .request()
           .input("senderId", sql.Int, data.senderId)
           .input("recieverId", sql.Int, data.recieverId)
           .input("roomId", sql.Int, data.roomId)
-          .input("message", sql.NVarChar, data.message)
+          .input("message", sql.NVarChar, data.messages)
           .input("createdAt", sql.DateTime, data.createdAt)
           .query(
             "INSERT INTO Messages (senderId, roomId, receiverId, message, createdAt) VALUES (@senderId, @roomId, @recieverId, @message, GETDATE())"
@@ -56,8 +78,6 @@ export const chatMessage = (io) => {
         }
       } catch (err) {
         console.log(err);
-      } finally {
-        await pool.close();
       }
     });
 
