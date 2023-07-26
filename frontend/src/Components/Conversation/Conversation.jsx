@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { makeRequest } from "../../utils/utils";
 
-const Conversation = ({ data, currentUserId }) => {
+const Conversation = ({ data, currentUserId, online }) => {
     const [userData, setUserData] = useState(null);
 
     useEffect(() => {
@@ -33,12 +33,18 @@ const Conversation = ({ data, currentUserId }) => {
             <div className="Conversation">
                 <div>
                     <div className="follower conversation">
-                        <div className="online-dot"></div>
+                        {
+                            online ? <div className="online-dot"></div> : null
+                        }
                         <img src={userData?.profilePic} alt="" className="followerImage" style={{ width: "50px", height: "50px", borderRadius: "50%" }} />
                         {/* {console.log(userData.profilePic)} */}
                         <div className="name" style={{ fontSize: "0.8rem" }}>
-                            <span>{userData?.username}</span>
-                            <span>Online</span>
+                            <span>{userData?.fullname}</span>
+                            <span>
+                                {
+                                    online ? "Online" : "Offline"
+                                }
+                            </span>
                         </div>
                     </div>
                 </div>

@@ -60,37 +60,6 @@ CREATE TABLE Likes (
 );
 SELECT *
 FROM Likes;
-CREATE TABLE Rooms(
-    id UNIQUEIDENTIFIER PRIMARY KEY NOT NULL,
-    senderId INT NOT NULL,
-    receiverId INT NOT NULL,
-    FOREIGN KEY (senderId) REFERENCES Users(id),
-    FOREIGN KEY (receiverId) REFERENCES Users(id)
-)
-SELECT *
-FROM Rooms;
-SELECT *
-FROM Rooms
-WHERE (
-        senderId = 1022
-        AND receiverId = 32
-    )
-    OR (
-        senderId = 32
-        AND receiverId = 1022
-    ) CREATE TABLE Messages(
-        id INT PRIMARY KEY IDENTITY(1, 1) NOT NULL,
-        roomId UNIQUEIDENTIFIER NOT NULL,
-        senderId INT NOT NULL,
-        receiverId INT NOT NULL,
-        message NVARCHAR(1000) COLLATE Latin1_General_100_CI_AI_SC_UTF8 NOT NULL,
-        createdAt DATETIME,
-        FOREIGN KEY (senderId) REFERENCES Users(id),
-        FOREIGN KEY (receiverId) REFERENCES Users(id),
-        FOREIGN KEY (roomId) REFERENCES Rooms(id)
-    )
-SELECT *
-FROM Messages;
 
 CREATE TABLE Message (
     id INT IDENTITY(1, 1) PRIMARY KEY,
@@ -113,3 +82,5 @@ CREATE TABLE Chat (
 );
 
 SELECT * FROM Chat;
+
+DELETE FROM Chat WHERE id IN (10,9,8,7,6,5,4,3,2);

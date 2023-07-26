@@ -46,6 +46,7 @@ export const addRelationship = async (req, res) => {
       );
 
     res.status(200).json({ message: "Relationship added successfully" });
+    // node mailer
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: error.message });

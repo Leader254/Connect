@@ -3,26 +3,19 @@ import { useContext, useState } from 'react';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import { VscLocation } from 'react-icons/vsc';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { AuthContext } from '../../Context/authContext';
 import { makeRequest } from '../../utils/utils';
 import Update from '../../Components/Update/Update';
 import Posts from '../../Components/Posts/Posts';
 import { BiSolidMessageDetail } from 'react-icons/bi';
-// import { useReducer } from 'react';
-import { useChatContext } from '../../Context/ChatContext';
-import { SocketContextProvider } from '../../Context/SocketContext';
 
 
 const Profile = () => {
-  // const socket = useSocketContext();
-  const socket = useContext(SocketContextProvider);
-  console.log(socket)
+
   const [showUpdate, setShowUpdate] = useState(false);
   const { user } = useContext(AuthContext);
   const userId = parseInt(useLocation().pathname.split("/")[2]);
-  const navigate = useNavigate();
-  const { setNewChatInfo } = useChatContext();
 
   const { isLoading, data } = useQuery(["user"], () =>
     makeRequest.get('/users/find/' + userId).then((res) => res.data)
@@ -51,17 +44,6 @@ const Profile = () => {
   const handleFollow = () => {
     mutation.mutate(relationshipData && relationshipData.includes(user.id));
   };
-
-  const routeToRoom = () => {
-    makeRequest.post('/chats/createRoomId', { senderId: user.id, receiverId: userId }).then((res) => {
-      console.log(user.id, userId)
-      setNewChatInfo({ senderId: user.id, receiverId: userId, roomId: res.data.roomId })
-      // console.log(res.data.roomId)
-      // console.log(socket)
-      // socket.current.emit('joinRoom', res.data.roomId)
-      navigate('/messenger', { replace: true });
-    })
-  }
 
   return (
     <div className='profile'>
@@ -99,8 +81,7 @@ const Profile = () => {
                 )}
               </div>
               <div className="right">
-                {/* <BiSolidMessageDetail style={{ fontSize: '30px', cursor: "pointer" }} onClick={routeToRoom} /> */}
-                <BiSolidMessageDetail style={{ fontSize: '30px', cursor: "pointer" }} onClick={routeToRoom} />
+                <BiSolidMessageDetail style={{ fontSize: '30px', cursor: "pointer" }} />
                 <FiMoreHorizontal style={{ fontSize: "25px" }} />
               </div>
             </div>

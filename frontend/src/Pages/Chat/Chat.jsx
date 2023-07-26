@@ -18,7 +18,36 @@ const Chat = () => {
     const [currentChat, setCurrentChat] = useState(null);
     const [onlineUsers, setOnlineUsers] = useState([]);
     const [sendMessage, setSendMessage] = useState(null);
+    const [receivedMessage, setReceivedMessage] = useState(null);
+
     const socket = useRef();
+
+    // Connect to socket io server
+    useEffect(() => {
+        // Connect to socket io server
+        socket.current = io("http://localhost:8080");
+        socket.current?.emit("new-user-add", user.id);
+        socket.current?.on("get-users", (users) => {
+            setOnlineUsers(users);
+        });
+
+        // // receive message from socket server
+        // socket.current?.on("receive-message", (data) => {
+        //     setReceivedMessage(data);
+        // });
+
+        // // Clean up the socket connection when the component unmounts
+        // return () => {
+        //     socket.current.disconnect();
+        // };
+    }, [user]);
+
+    // receive message from socket server
+    useEffect(() => {
+        socket.current.on("receive-message", (data) => {
+            setReceivedMessage(data);
+        });
+    }, []);
 
     // Send Message to socket server
     useEffect(() => {
@@ -26,14 +55,6 @@ const Chat = () => {
             socket.current.emit("send-message", sendMessage);
         }
     }, [sendMessage]);
-
-    useEffect(() => {
-        socket.current = io("http://localhost:8080");
-        socket.current.emit("new-user-add", user.id);
-        socket.current.on("get-users", (users) => {
-            setOnlineUsers(users);
-        });
-    }, [user]);
 
     useEffect(() => {
         const getConversations = async () => {
@@ -49,6 +70,14 @@ const Chat = () => {
         getConversations();
     }, [user.id]);
 
+    const checkOnlineStatus = (chat) => {
+        // Determine the other member's ID (not the current user's ID)
+        const chatMember = chat.senderId === user.id ? chat.receiverId : chat.senderId;
+        // Check if the 'chatMember' is present in the 'onlineUsers' array
+        const online = onlineUsers.find((user) => user.userId === chatMember);
+        return online ? true : false;
+    };
+
     return (
         <div className="Chat">
             {/* Left-Side */}
@@ -61,7 +90,7 @@ const Chat = () => {
                                 <div key={conversation.id}
                                     onClick={() => setCurrentChat(conversation)}
                                 >
-                                    <Conversation data={conversation} currentUser={user.id} />
+                                    <Conversation data={conversation} currentUser={user.id} online={checkOnlineStatus(conversation)} />
                                 </div>
                             ))
                         }
@@ -86,6 +115,7 @@ const Chat = () => {
                         chat={currentChat}
                         currentUser={user.id}
                         setSendMessage={setSendMessage}
+                        receivedMessage={receivedMessage}
                     />
                 </div>
             </div>

@@ -1,16 +1,24 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { makeRequest } from "../../utils/utils";
 import './ChatBox.css'
 import { format } from 'timeago.js'
 import InputEmoji from 'react-input-emoji'
 
 
-const ChatBox = ({ chat, currentUser, setSendMessage }) => {
+const ChatBox = ({ chat, currentUser, setSendMessage, receivedMessage }) => {
 
     const [userData, setUserData] = useState(null);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
+    const scroll = useRef();
+
+
+    useEffect(() => {
+        if (receivedMessage !== null && receivedMessage.chatId === chat.id) {
+            setMessages([...messages, receivedMessage]);
+        }
+    }, [receivedMessage])
 
     // fetching data for our header
     useEffect(() => {
@@ -35,7 +43,7 @@ const ChatBox = ({ chat, currentUser, setSendMessage }) => {
             try {
                 const data = await makeRequest.get('messages/' + chat?.id);
                 setMessages(data.data);
-                console.log(data.data);
+                // console.log(data.data);
             } catch (err) {
                 console.log(err);
             }
@@ -75,6 +83,11 @@ const ChatBox = ({ chat, currentUser, setSendMessage }) => {
 
     }
 
+    // Always scroll to the bottom of the chat
+    useEffect(() => {
+        scroll.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages])
+
 
 
     return (
@@ -112,7 +125,7 @@ const ChatBox = ({ chat, currentUser, setSendMessage }) => {
                         <div className="chat-body" >
                             {messages.map((message) => (
                                 <>
-                                    <div className={message.receiverId === currentUser ? "message own" : "message"}>
+                                    <div ref={scroll} className={message.receiverId === currentUser ? "message own" : "message"}>
                                         <span>{message.text}</span>{" "}
                                         {/* <span>{format(message.createdAt)}</span> */}
                                         <span>{format(message.createdAt)}</span>
